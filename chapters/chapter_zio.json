@@ -1,0 +1,108 @@
+[
+    {
+      "chapter": 1,
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2"
+      ],
+      "startDate": "2025-02-18",
+      "dueDate": "2025-03-18",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-04",
+      "writtenExamDate": "2025-02-19"
+    },
+    {
+      "chapter": 2,
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2"
+      ],
+      "startDate": "2025-02-18",
+      "dueDate": "2025-03-18",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-04",
+      "writtenExamDate": "2025-02-19"
+    },
+    {
+      "chapter": 3,
+      "lehrmittel": true,
+      "vertiefung": [
+        "3",
+        "4"
+      ],
+      "startDate": "2025-03-11",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-25",
+      "writtenExamDate": "2025-04-02"
+    },
+    {
+      "chapter": 4,
+      "lehrmittel": true,
+      "vertiefung": [
+        "3",
+        "4"
+      ],
+      "startDate": "2025-03-11",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-25",
+      "writtenExamDate": "2025-04-02"
+    },
+    {
+      "chapter": 5,
+      "lehrmittel": [
+        "5",
+        "6",
+        "7"
+      ],
+      "vertiefung": [
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-03-18",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
+    },
+    {
+      "chapter": 6,
+      "lehrmittel": [
+        "5",
+        "6",
+        "7"
+      ],
+      "vertiefung": [
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-03-18",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
+    },
+    {
+      "chapter": 7,
+      "lehrmittel": [
+        "5",
+        "6",
+        "7"
+      ],
+      "vertiefung": [
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-03-18",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
+    }
+]
