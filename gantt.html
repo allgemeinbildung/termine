@@ -16,8 +16,10 @@
       --hover-color: #f5f5f5;
       --row-height: 40px;
       --axis-height: 50px;
-      --label-width: 150px;
+      --label-width: 220px; /* Increased to accommodate mandatory indicators */
       --pixels-per-day: 20;
+      --mandatory-color: #3498db;
+      --semi-mandatory-color: #e67e22;
     }
 
     * {
@@ -60,12 +62,14 @@
       margin-top: 0.5rem;
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
       margin-right: 20px;
+      margin-bottom: 5px;
     }
 
     .legend-diamond {
@@ -81,6 +85,22 @@
       height: 12px;
       margin-right: 8px;
       background-color: var(--written-exam-color);
+    }
+    
+    .legend-mandatory {
+      width: 12px;
+      height: 12px;
+      margin-right: 8px;
+      background-color: var(--mandatory-color);
+      border-radius: 2px;
+    }
+    
+    .legend-semi-mandatory {
+      width: 12px;
+      height: 12px;
+      margin-right: 8px;
+      background-color: var(--semi-mandatory-color);
+      border-radius: 2px;
     }
 
     #chart-inner {
@@ -195,6 +215,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      flex-grow: 1;
     }
 
     .gantt-timeline {
@@ -252,7 +273,6 @@
       box-shadow: 0 3px 8px rgba(0,0,0,0.3);
     }
 
-    /* New style for written exam marker */
     .written-exam-marker {
       position: absolute;
       width: 16px;
@@ -282,6 +302,38 @@
       cursor: pointer;
     }
 
+    .requirement-indicator {
+      display: flex;
+      align-items: center;
+      margin-right: 8px;
+    }
+
+    .requirement-badge {
+      width: 34px;
+      height: 18px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      color: white;
+      margin: 0 2px;
+    }
+
+    .mandatory-badge {
+      background-color: var(--mandatory-color);
+    }
+
+    .semi-mandatory-badge {
+      background-color: var(--semi-mandatory-color);
+    }
+
+    .semi-mandatory-group {
+      font-size: 11px;
+      color: #666;
+      margin-left: 5px;
+    }
+
     .tooltip {
       position: absolute;
       background: rgba(0,0,0,0.8);
@@ -299,7 +351,8 @@
     .gantt-bar:hover + .tooltip,
     .exam-marker:hover + .tooltip,
     .written-exam-marker:hover + .tooltip,
-    .due-symbol:hover + .tooltip {
+    .due-symbol:hover + .tooltip,
+    .requirement-badge:hover + .tooltip {
       opacity: 1;
     }
   </style>
@@ -316,6 +369,14 @@
         <div class="legend-item">
           <div class="legend-square"></div>
           <span>Schriftliche Prüfungen</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-mandatory"></div>
+          <span>Pflicht</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-semi-mandatory"></div>
+          <span>Wahlpflicht</span>
         </div>
       </div>
     </div>
@@ -364,6 +425,55 @@
       return date.toLocaleString('default', { month: 'short' }) + ' ' + date.getFullYear();
     }
 
+    // Check if value is an array to determine if it's semi-mandatory
+    function isSemiMandatory(value) {
+      return Array.isArray(value) && !value.every(item => item === true);
+    }
+
+    // Helper to generate requirement badges
+    function createRequirementBadges(lehrmittel, vertiefung) {
+      const container = document.createElement("div");
+      container.className = "requirement-indicator";
+      
+      // Add Lehrmittel badge
+      const lmBadge = document.createElement("div");
+      lmBadge.className = lehrmittel === true ? 
+        "requirement-badge mandatory-badge" : 
+        "requirement-badge semi-mandatory-badge";
+      lmBadge.textContent = "LM";
+      lmBadge.title = lehrmittel === true ? 
+        "Lehrmittel: Pflicht" : 
+        `Lehrmittel: Wahlpflicht (Gruppe ${Array.isArray(lehrmittel) ? lehrmittel.join('/') : ''})`;
+      container.appendChild(lmBadge);
+      
+      // Add tooltip for lehrmittel
+      const lmTooltip = document.createElement("div");
+      lmTooltip.className = "tooltip";
+      lmTooltip.style.top = "-25px";
+      lmTooltip.textContent = lmBadge.title;
+      container.appendChild(lmTooltip);
+      
+      // Add Vertiefung badge
+      const vtBadge = document.createElement("div");
+      vtBadge.className = vertiefung === true ? 
+        "requirement-badge mandatory-badge" : 
+        "requirement-badge semi-mandatory-badge";
+      vtBadge.textContent = "VT";
+      vtBadge.title = vertiefung === true ? 
+        "Vertiefung: Pflicht" : 
+        `Vertiefung: Wahlpflicht (Gruppe ${Array.isArray(vertiefung) ? vertiefung.join('/') : ''})`;
+      container.appendChild(vtBadge);
+      
+      // Add tooltip for vertiefung
+      const vtTooltip = document.createElement("div");
+      vtTooltip.className = "tooltip";
+      vtTooltip.style.top = "-25px";
+      vtTooltip.textContent = vtBadge.title;
+      container.appendChild(vtTooltip);
+      
+      return container;
+    }
+
     // Main function to build the Gantt chart
     function buildGantt(chapters) {
       // 1. Process and parse data
@@ -372,7 +482,7 @@
         start: parseDate(ch.startDate),
         due: parseDate(ch.dueDate),
         exam: parseDate(ch.oralExamDate),
-        writtenExam: parseDate(ch.writtenExamDate) // Parse written exam date
+        writtenExam: parseDate(ch.writtenExamDate)
       })).filter(ch => ch.start && ch.due);
 
       if (data.length === 0) {
@@ -527,6 +637,10 @@
           localStorage.setItem(storageKey, checkbox.checked.toString());
         });
         checkboxWrapper.appendChild(checkbox);
+        
+        // Add requirement badges
+        const badges = createRequirementBadges(ch.lehrmittel, ch.vertiefung);
+        labelContainer.appendChild(badges);
         
         // Label text
         const labelSpan = document.createElement("div");
