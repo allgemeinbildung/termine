@@ -1,0 +1,94 @@
+[
+    {
+      "chapter": "1",
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2"
+      ],
+      "dueDate": null,
+      "oralExamRelevant": true,
+      "oralExamDate": null
+    },
+    {
+      "chapter": "2",
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2"
+      ],
+      "dueDate": null,
+      "oralExamRelevant": true,
+      "oralExamDate": null
+    },
+    {
+      "chapter": "3",
+      "lehrmittel": true,
+      "vertiefung": [
+        "3",
+        "4"
+      ],
+      "dueDate": null,
+      "oralExamRelevant": true,
+      "oralExamDate": null
+    },
+    {
+      "chapter": "4",
+      "lehrmittel": true,
+      "vertiefung": [
+        "3",
+        "4"
+      ],
+      "dueDate": null,
+      "oralExamRelevant": true,
+      "oralExamDate": null
+    },
+    {
+      "chapter": "5",
+      "lehrmittel": [
+        "5",
+        "6",
+        "7"
+      ],
+      "vertiefung": [
+        "5",
+        "6",
+        "7"
+      ],
+      "dueDate": null,
+      "oralExamRelevant": null,
+      "oralExamDate": null
+    },
+    {
+      "chapter": "6",
+      "lehrmittel": [
+        "5",
+        "6",
+        "7"
+      ],
+      "vertiefung": [
+        "5",
+        "6",
+        "7"
+      ],
+      "dueDate": null,
+      "oralExamRelevant": null,
+      "oralExamDate": null
+    },
+    {
+      "chapter": "7",
+      "lehrmittel": [
+        "5",
+        "6",
+        "7"
+      ],
+      "vertiefung": [
+        "5",
+        "6",
+        "7"
+      ],
+      "dueDate": null,
+      "oralExamRelevant": null,
+      "oralExamDate": null
+    }
+  ]
