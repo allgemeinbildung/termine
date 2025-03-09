@@ -102,6 +102,14 @@
       background-color: var(--semi-mandatory-color);
       border-radius: 2px;
     }
+    
+    /* New legend item for grouped LM/VT */
+    .legend-group {
+      width: 12px;
+      height: 12px;
+      margin-right: 8px;
+      background-color: #ccc; /* placeholder color */
+    }
 
     #chart-inner {
       position: relative;
@@ -378,6 +386,15 @@
           <div class="legend-semi-mandatory"></div>
           <span>Wahlpflicht</span>
         </div>
+        <!-- New legend items for LM and VT groups -->
+        <div class="legend-item">
+          <div class="legend-group"></div>
+          <span>Lehrmittel (LM) Groups</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-group"></div>
+          <span>Vertiefung (VT) Groups</span>
+        </div>
       </div>
     </div>
 
@@ -385,6 +402,17 @@
   </div>
 
   <script>
+    // Define a palette for group colors (for Wahlpflicht groups)
+    const groupColorPalette = [
+      "#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
+      "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe"
+    ];
+    function getGroupColor(groupNumber) {
+      // Use the group number (assumed numeric) to pick a color from the palette
+      const index = (parseInt(groupNumber, 10) - 1) % groupColorPalette.length;
+      return groupColorPalette[index];
+    }
+
     // Get URL parameter for chapter
     const urlParams = new URLSearchParams(window.location.search);
     const chapterParam = urlParams.get("chapter") || "1";
@@ -425,51 +453,75 @@
       return date.toLocaleString('default', { month: 'short' }) + ' ' + date.getFullYear();
     }
 
-    // Check if value is an array to determine if it's semi-mandatory
-    function isSemiMandatory(value) {
-      return Array.isArray(value) && !value.every(item => item === true);
-    }
-
-    // Helper to generate requirement badges
+    // Create requirement badges for Lehrmittel (LM) and Vertiefung (VT)
     function createRequirementBadges(lehrmittel, vertiefung) {
       const container = document.createElement("div");
       container.className = "requirement-indicator";
       
-      // Add Lehrmittel badge
-      const lmBadge = document.createElement("div");
-      lmBadge.className = lehrmittel === true ? 
-        "requirement-badge mandatory-badge" : 
-        "requirement-badge semi-mandatory-badge";
-      lmBadge.textContent = "LM";
-      lmBadge.title = lehrmittel === true ? 
-        "Lehrmittel: Pflicht" : 
-        `Lehrmittel: Wahlpflicht (Gruppe ${Array.isArray(lehrmittel) ? lehrmittel.join('/') : ''})`;
-      container.appendChild(lmBadge);
+      // Lehrmittel badge(s)
+      if (lehrmittel === true) {
+        // Mandatory: use the standard mandatory style.
+        const lmBadge = document.createElement("div");
+        lmBadge.className = "requirement-badge mandatory-badge";
+        lmBadge.textContent = "LM";
+        lmBadge.title = "Lehrmittel: Pflicht";
+        container.appendChild(lmBadge);
+        
+        // Tooltip
+        const lmTooltip = document.createElement("div");
+        lmTooltip.className = "tooltip";
+        lmTooltip.style.top = "-25px";
+        lmTooltip.textContent = lmBadge.title;
+        container.appendChild(lmTooltip);
+      } else {
+        // Assume grouped value(s) (Wahlpflicht)
+        const groups = Array.isArray(lehrmittel) ? lehrmittel : [lehrmittel];
+        groups.forEach(group => {
+          const lmBadge = document.createElement("div");
+          lmBadge.className = "requirement-badge";
+          lmBadge.textContent = "LM " + group;
+          lmBadge.style.backgroundColor = getGroupColor(group);
+          lmBadge.title = `Lehrmittel: Wahlpflicht (Gruppe ${group})`;
+          container.appendChild(lmBadge);
+          
+          const lmTooltip = document.createElement("div");
+          lmTooltip.className = "tooltip";
+          lmTooltip.style.top = "-25px";
+          lmTooltip.textContent = lmBadge.title;
+          container.appendChild(lmTooltip);
+        });
+      }
       
-      // Add tooltip for lehrmittel
-      const lmTooltip = document.createElement("div");
-      lmTooltip.className = "tooltip";
-      lmTooltip.style.top = "-25px";
-      lmTooltip.textContent = lmBadge.title;
-      container.appendChild(lmTooltip);
-      
-      // Add Vertiefung badge
-      const vtBadge = document.createElement("div");
-      vtBadge.className = vertiefung === true ? 
-        "requirement-badge mandatory-badge" : 
-        "requirement-badge semi-mandatory-badge";
-      vtBadge.textContent = "VT";
-      vtBadge.title = vertiefung === true ? 
-        "Vertiefung: Pflicht" : 
-        `Vertiefung: Wahlpflicht (Gruppe ${Array.isArray(vertiefung) ? vertiefung.join('/') : ''})`;
-      container.appendChild(vtBadge);
-      
-      // Add tooltip for vertiefung
-      const vtTooltip = document.createElement("div");
-      vtTooltip.className = "tooltip";
-      vtTooltip.style.top = "-25px";
-      vtTooltip.textContent = vtBadge.title;
-      container.appendChild(vtTooltip);
+      // Vertiefung badge(s)
+      if (vertiefung === true) {
+        const vtBadge = document.createElement("div");
+        vtBadge.className = "requirement-badge mandatory-badge";
+        vtBadge.textContent = "VT";
+        vtBadge.title = "Vertiefung: Pflicht";
+        container.appendChild(vtBadge);
+        
+        const vtTooltip = document.createElement("div");
+        vtTooltip.className = "tooltip";
+        vtTooltip.style.top = "-25px";
+        vtTooltip.textContent = vtBadge.title;
+        container.appendChild(vtTooltip);
+      } else {
+        const groups = Array.isArray(vertiefung) ? vertiefung : [vertiefung];
+        groups.forEach(group => {
+          const vtBadge = document.createElement("div");
+          vtBadge.className = "requirement-badge";
+          vtBadge.textContent = "VT " + group;
+          vtBadge.style.backgroundColor = getGroupColor(group);
+          vtBadge.title = `Vertiefung: Wahlpflicht (Gruppe ${group})`;
+          container.appendChild(vtBadge);
+          
+          const vtTooltip = document.createElement("div");
+          vtTooltip.className = "tooltip";
+          vtTooltip.style.top = "-25px";
+          vtTooltip.textContent = vtBadge.title;
+          container.appendChild(vtTooltip);
+        });
+      }
       
       return container;
     }
@@ -638,7 +690,7 @@
         });
         checkboxWrapper.appendChild(checkbox);
         
-        // Add requirement badges
+        // Add requirement badges (LM and VT with group colors if applicable)
         const badges = createRequirementBadges(ch.lehrmittel, ch.vertiefung);
         labelContainer.appendChild(badges);
         
