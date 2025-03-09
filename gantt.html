@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Improved Gantt Chart</title>
+  <title>Ablaufplan</title>
   <style>
     :root {
       --primary-color: #3498db;
@@ -55,16 +55,24 @@
       color: #2c3e50;
     }
 
-    .chart-header p {
-      margin: 0;
-      color: #7f8c8d;
+    .legend {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
     }
 
-    .chart-header code {
-      background: #f0f0f0;
-      padding: 0.2rem 0.4rem;
-      border-radius: 3px;
-      font-family: 'Courier New', monospace;
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+    }
+
+    .legend-diamond {
+      width: 12px;
+      height: 12px;
+      margin-right: 8px;
+      background-color: var(--highlight-color);
+      transform: rotate(45deg);
     }
 
     #chart-inner {
@@ -206,6 +214,19 @@
       top: 6px;
     }
 
+    .due-symbol {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background-color: #e67e22;
+      border-radius: 50%;
+      right: -8px;
+      top: calc(50% - 8px);
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+
     .exam-marker {
       position: absolute;
       width: 16px;
@@ -251,60 +272,22 @@
     }
 
     .gantt-bar:hover + .tooltip,
-    .exam-marker:hover + .tooltip {
+    .exam-marker:hover + .tooltip,
+    .due-symbol:hover + .tooltip {
       opacity: 1;
-    }
-
-    .info {
-      padding: 1.5rem;
-      margin-top: 20px;
-      background: var(--bg-color);
-      border-top: 1px solid var(--border-color);
-    }
-
-    .info h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      color: #2c3e50;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .legend-color {
-      width: 16px;
-      height: 16px;
-      margin-right: 8px;
-      border-radius: 3px;
-    }
-
-    .legend-diamond {
-      width: 12px;
-      height: 12px;
-      margin-right: 8px;
-      background-color: var(--highlight-color);
-      transform: rotate(45deg);
-    }
-
-    .legend-line {
-      width: 2px;
-      height: 16px;
-      margin-right: 8px;
-      background-color: var(--today-color);
     }
   </style>
 </head>
 <body>
   <div id="chart-container">
     <div class="chart-header">
-      <h1>Improved Gantt Chart</h1>
-      <p>
-        Loads <code>chapters/chapter_X.json</code> based on <strong>?chapter=X</strong>.
-        Example: <code>gantt_improved.html?chapter=1</code>.
-      </p>
+      <h1>Ablaufplan <span id="chapter-title"></span></h1>
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-diamond"></div>
+          <span>Oral exam date (<strong>oralExamDate</strong>)</span>
+        </div>
+      </div>
     </div>
 
     <div id="chart-inner"></div>
@@ -315,6 +298,9 @@
     const urlParams = new URLSearchParams(window.location.search);
     const chapterParam = urlParams.get("chapter") || "1";
     const jsonPath = `chapters/chapter_${chapterParam}.json`;
+    
+    // Update chapter title
+    document.getElementById("chapter-title").textContent = `- Chapter ${chapterParam}`;
 
     // Get CSS variables
     const getVarValue = (name) => {
@@ -325,56 +311,6 @@
     const AXIS_HEIGHT = getVarValue('--axis-height');
     const ROW_HEIGHT = getVarValue('--row-height');
     const LABEL_WIDTH = getVarValue('--label-width');
-
-    // Mock data for development/testing
-    const mockData = [
-      {
-        chapter: 1,
-        startDate: "2025-02-01",
-        dueDate: "2025-03-15",
-        oralExamDate: "2025-03-01",
-        oralExamRelevant: true
-      },
-      {
-        chapter: 2,
-        startDate: "2025-02-01",
-        dueDate: "2025-03-15",
-        oralExamDate: "2025-03-03",
-        oralExamRelevant: true
-      },
-      {
-        chapter: 3,
-        startDate: "2025-02-01",
-        dueDate: "2025-03-15", 
-        oralExamDate: "2025-03-05",
-        oralExamRelevant: true
-      },
-      {
-        chapter: 4,
-        startDate: "2025-02-15",
-        dueDate: "2025-04-01",
-        oralExamDate: "2025-03-07",
-        oralExamRelevant: true
-      },
-      {
-        chapter: 5,
-        startDate: "2025-03-01",
-        dueDate: "2025-04-15",
-        oralExamRelevant: false
-      },
-      {
-        chapter: 6,
-        startDate: "2025-03-15",
-        dueDate: "2025-04-30",
-        oralExamRelevant: false
-      },
-      {
-        chapter: 7,
-        startDate: "2025-04-01",
-        dueDate: "2025-05-15",
-        oralExamRelevant: false
-      }
-    ];
 
     // Parse date strings to Date objects
     function parseDate(dateStr) {
@@ -427,7 +363,7 @@
 
       // 3. Calculate dimensions
       const chartWidth = totalDays * PIXELS_PER_DAY + LABEL_WIDTH + 50;
-      const chartHeight = data.length * ROW_HEIGHT + AXIS_HEIGHT + 150;
+      const chartHeight = data.length * ROW_HEIGHT + AXIS_HEIGHT + 50;
 
       const chartInner = document.getElementById("chart-inner");
       chartInner.style.width = chartWidth + "px";
@@ -579,6 +515,11 @@
         barDiv.style.width = barWidth + "px";
         timelineDiv.appendChild(barDiv);
         
+        // Add due symbol at the end of the bar
+        const dueSymbol = document.createElement("div");
+        dueSymbol.className = "due-symbol";
+        barDiv.appendChild(dueSymbol);
+        
         // Bar tooltip
         const barTooltip = document.createElement("div");
         barTooltip.className = "tooltip";
@@ -586,6 +527,14 @@
         barTooltip.style.top = "-25px";
         barTooltip.textContent = `Start: ${ch.startDate} | Due: ${ch.dueDate}`;
         timelineDiv.appendChild(barTooltip);
+        
+        // Due tooltip
+        const dueTooltip = document.createElement("div");
+        dueTooltip.className = "tooltip";
+        dueTooltip.style.left = (barLeft + barWidth) + "px";
+        dueTooltip.style.top = "-25px";
+        dueTooltip.textContent = `Due: ${ch.dueDate}`;
+        timelineDiv.appendChild(dueTooltip);
 
         // Oral exam diamond if relevant
         if (ch.oralExamRelevant === true && ch.exam) {
@@ -608,43 +557,13 @@
           }
         }
       });
-
-      // 7. Info/Legend section
-      const infoDiv = document.createElement("div");
-      infoDiv.className = "info";
-      infoDiv.style.top = (AXIS_HEIGHT + data.length * ROW_HEIGHT + 20) + "px";
-      infoDiv.style.width = chartWidth + "px";
-      
-      infoDiv.innerHTML = `
-        <h3>Legend</h3>
-        <div class="legend">
-          <div class="legend-item">
-            <div class="legend-color" style="background-color: var(--secondary-color);"></div>
-            <span>Timeline from <strong>startDate</strong> to <strong>dueDate</strong></span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-diamond"></div>
-            <span>Oral exam date (<strong>oralExamDate</strong>)</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-line"></div>
-            <span>Today's date</span>
-          </div>
-          <div class="legend-item">
-            <input type="checkbox" disabled>
-            <span style="margin-left: 8px;">Mark chapter as completed (saved in browser storage)</span>
-          </div>
-        </div>
-      `;
-      chartInner.appendChild(infoDiv);
     }
 
-    // Try to load real data, fall back to mock data for development
+    // Load data from JSON
     fetch(jsonPath)
       .then(res => {
         if (!res.ok) {
-          console.warn(`Warning: ${jsonPath} not found, using mock data instead.`);
-          throw new Error("File not found");
+          throw new Error(`Error loading JSON: ${res.status} ${res.statusText}`);
         }
         return res.json();
       })
@@ -652,8 +571,9 @@
         buildGantt(chapters);
       })
       .catch(err => {
-        console.log("Using mock data instead:", err);
-        buildGantt(mockData);
+        console.error(err);
+        document.getElementById("chart-inner").innerHTML = 
+          `<p style="padding: 20px; color: #e74c3c;">Error loading data: ${err.message}</p>`;
       });
   </script>
 </body>
