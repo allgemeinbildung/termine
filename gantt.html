@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Gantt Chart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .gantt-container {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      position: relative;
+      width: 100%;
+      max-width: 800px; /* Adjust as needed */
+    }
+
+    /* Each row in the Gantt chart */
+    .gantt-row {
+      margin-bottom: 15px;
+      border-bottom: 1px dashed #ccc;
+      padding: 5px 0;
+      position: relative;
+    }
+
+    /* Label (e.g., "Chapter 1") to the left */
+    .gantt-label {
+      display: inline-block;
+      width: 120px;  /* Adjust for label width */
+      font-weight: bold;
+    }
+
+    /* The bar that visualizes the time from today to dueDate */
+    .gantt-bar {
+      display: inline-block;
+      height: 20px;
+      background-color: #4CAF50;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+
+    /* A small checkbox area for completion tracking */
+    .completion-checkbox {
+      margin-left: 15px;
+    }
+
+    /* Info text under the chart */
+    .info {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Gantt Chart View</h1>
+  <p>
+    This page loads JSON data from the <code>chapters</code> folder based on 
+    <strong>?chapter=X</strong> in the URL (e.g., <code>gantt.html?chapter=1</code>).
+  </p>
+
+  <div id="gantt-container" class="gantt-container">
+    <!-- Rows will be injected here by JavaScript -->
+  </div>
+
+  <div class="info">
+    <p><strong>Notes:</strong></p>
+    <ul>
+      <li>The green bar length is proportional to the days between <em>today</em> and the <em>dueDate</em>.</li>
+      <li>If the <em>dueDate</em> is missing or invalid, that row is skipped.</li>
+      <li>Check the box to mark a chapter as completed; it’s stored locally (Local Storage).</li>
+    </ul>
+  </div>
+
+  <script>
+    // Get the 'chapter' query parameter from the URL (default to "1" if none provided)
+    const urlParams = new URLSearchParams(window.location.search);
+    const chapterParam = urlParams.get('chapter') || "1";
+
+    // Construct the path to the JSON file
+    const jsonPath = `chapters/chapter_${chapterParam}.json`;
+
+    // We'll need a helper to parse dates in "YYYY-MM-DD" format
+    function parseDate(dateStr) {
+      if (!dateStr) return null; // if null/undefined
+      // Attempt to parse "YYYY-MM-DD"
+      const parts = dateStr.split("-");
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // zero-based for JS Date
+        const day = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+      }
+      return null;
+    }
+
+    // Fetch the JSON data
+    fetch(jsonPath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Error loading JSON: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // data should be an array of chapter objects
+        createGanttChart(data);
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById('gantt-container').textContent =
+          "Error loading data. Check console for details.";
+      });
+
+    function createGanttChart(chapters) {
+      const container = document.getElementById('gantt-container');
+      const today = new Date();
+
+      chapters.forEach((item, index) => {
+        // Parse the dueDate
+        const dueDate = parseDate(item.dueDate);
+        if (!dueDate) {
+          // If no valid dueDate, skip or handle differently
+          return;
+        }
+
+        // Calculate days difference from today to dueDate
+        const msPerDay = 1000 * 60 * 60 * 24;
+        let diffDays = Math.round((dueDate - today) / msPerDay);
+
+        // If the date is in the past, set diffDays to 0 for display
+        if (diffDays < 0) {
+          diffDays = 0;
+        }
+
+        // Create a row container
+        const row = document.createElement('div');
+        row.className = 'gantt-row';
+
+        // Label (e.g. "Chapter 1 - due 2025-05-31")
+        const label = document.createElement('span');
+        label.className = 'gantt-label';
+        label.textContent = `Chapter ${item.chapter}`;
+        row.appendChild(label);
+
+        // Create the bar
+        const bar = document.createElement('span');
+        bar.className = 'gantt-bar';
+        // Scale factor: 5px per day, adjust as desired
+        const scale = 5;
+        bar.style.width = (diffDays * scale) + 'px';
+        // Optional: Add a tooltip or text showing the due date
+        bar.title = `Due: ${item.dueDate} (${diffDays} days from today)`;
+
+        row.appendChild(bar);
+
+        // Add a completion checkbox that uses Local Storage
+        const checkboxWrapper = document.createElement('span');
+        checkboxWrapper.className = 'completion-checkbox';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+
+        // Unique key for each row in localStorage
+        const storageKey = `gantt-chapter${chapterParam}-row${index}-completed`;
+        // Restore saved state
+        checkbox.checked = localStorage.getItem(storageKey) === "true";
+        // Save on change
+        checkbox.addEventListener('change', () => {
+          localStorage.setItem(storageKey, checkbox.checked.toString());
+        });
+
+        checkboxWrapper.appendChild(checkbox);
+        row.appendChild(checkboxWrapper);
+
+        // Finally, add this row to the container
+        container.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
