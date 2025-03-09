@@ -10,7 +10,7 @@
     "dueDate": "2025-03-18",
     "oralExamRelevant": true,
     "oralExamDate": "2025-03-04",
-    "writtenExamDate": "2025-04-01"
+    "writtenExamDate": "2025-02-19"
   },
   {
     "chapter": 2,
@@ -23,7 +23,7 @@
     "dueDate": "2025-03-18",
     "oralExamRelevant": true,
     "oralExamDate": "2025-03-04",
-    "writtenExamDate": "2025-04-01"
+    "writtenExamDate": "2025-02-19"
   },
   {
     "chapter": 3,
@@ -35,8 +35,8 @@
     "startDate": "2025-03-11",
     "dueDate": "2025-04-01",
     "oralExamRelevant": true,
-    "oralExamDate": "2025-03-18",
-    "writtenExamDate": "2025-04-01"
+    "oralExamDate": "2025-03-25",
+    "writtenExamDate": "2025-04-02"
   },
   {
     "chapter": 4,
@@ -48,8 +48,8 @@
     "startDate": "2025-03-11",
     "dueDate": "2025-04-01",
     "oralExamRelevant": true,
-    "oralExamDate": "2025-03-18",
-    "writtenExamDate": "2025-04-01"
+    "oralExamDate": "2025-03-25",
+    "writtenExamDate": "2025-04-02"
   },
   {
     "chapter": 5,
