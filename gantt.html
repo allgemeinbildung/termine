@@ -285,7 +285,7 @@
       <div class="legend">
         <div class="legend-item">
           <div class="legend-diamond"></div>
-          <span>Oral exam date (<strong>oralExamDate</strong>)</span>
+          <span>Mündliche Prüfungen</span>
         </div>
       </div>
     </div>
@@ -300,7 +300,7 @@
     const jsonPath = `chapters/chapter_${chapterParam}.json`;
     
     // Update chapter title
-    document.getElementById("chapter-title").textContent = `- Chapter ${chapterParam}`;
+    document.getElementById("chapter-title").textContent = `${chapterParam}`;
 
     // Get CSS variables
     const getVarValue = (name) => {
@@ -458,7 +458,7 @@
         todayLabel.className = "today-label";
         todayLabel.style.left = todayX + "px";
         todayLabel.style.top = AXIS_HEIGHT + "px";
-        todayLabel.textContent = "TODAY";
+        todayLabel.textContent = "HEUTE";
         chartInner.appendChild(todayLabel);
       }
 
@@ -494,7 +494,7 @@
         // Label text
         const labelSpan = document.createElement("div");
         labelSpan.className = "gantt-label";
-        labelSpan.textContent = `Chapter ${ch.chapter}`;
+        labelSpan.textContent = `Kapitel ${ch.chapter}`;
         labelContainer.appendChild(labelSpan);
 
         // Timeline container
