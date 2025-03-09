@@ -2,181 +2,381 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Improved Gantt Chart (Full Page)</title>
+  <title>Improved Gantt Chart</title>
   <style>
-    /* Make the entire page fill the window */
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2ecc71;
+      --highlight-color: #f39c12;
+      --today-color: #e74c3c;
+      --border-color: #ddd;
+      --text-color: #333;
+      --bg-color: #f9f9f9;
+      --hover-color: #f5f5f5;
+      --row-height: 40px;
+      --axis-height: 50px;
+      --label-width: 150px;
+      --pixels-per-day: 20;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      font-family: Arial, sans-serif;
-      overflow: hidden; /* We'll let the #chart-container scroll instead */
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      color: var(--text-color);
+      overflow: hidden;
     }
 
-    /* Scrollable container that fills the page */
     #chart-container {
       width: 100%;
       height: 100%;
-      overflow: auto; /* Enable scrollbars if content is large */
+      overflow: auto;
       position: relative;
-      background: #fff;
+      background: white;
     }
 
-    /* Some spacing at the top for the heading/info */
     .chart-header {
-      padding: 1rem;
+      padding: 1.5rem;
+      background: white;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
 
-    /* The "chart-inner" will hold the entire axis + rows at absolute positions */
+    .chart-header h1 {
+      margin: 0 0 0.5rem 0;
+      color: #2c3e50;
+    }
+
+    .chart-header p {
+      margin: 0;
+      color: #7f8c8d;
+    }
+
+    .chart-header code {
+      background: #f0f0f0;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+
     #chart-inner {
       position: relative;
-      /* We'll set its width/height in JS based on timeline size and row count */
+      margin-left: 20px;
     }
 
-    /* The top date-axis bar */
     .date-axis {
-      position: absolute;
-      top: 0;
+      position: sticky;
+      top: var(--axis-height);
       left: 0;
-      height: 30px;
-      background: #f9f9f9;
-      border-bottom: 1px solid #999;
+      height: var(--axis-height);
+      background: white;
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       z-index: 10;
+      display: flex;
+      flex-direction: column;
     }
-    .date-tick {
+
+    .month-row, .day-row {
+      height: calc(var(--axis-height) / 2);
+      position: relative;
+    }
+
+    .month-tick {
       position: absolute;
       top: 0;
-      width: 1px;
       height: 100%;
+      border-left: 1px solid var(--border-color);
+    }
+
+    .month-label {
+      position: absolute;
+      top: 5px;
+      transform: translateX(-50%);
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .day-tick {
+      position: absolute;
+      bottom: 0;
+      width: 1px;
+      height: 5px;
       background: #999;
     }
-    .date-label {
+
+    .week-tick {
       position: absolute;
-      top: 2px;
-      transform: translateX(-50%);
-      font-size: 0.8em;
-      color: #333;
-      white-space: nowrap;
+      bottom: 0;
+      width: 1px;
+      height: 10px;
+      background: #666;
     }
 
-    /* The red line for "today" */
+    .day-label {
+      position: absolute;
+      bottom: 15px;
+      transform: translateX(-50%);
+      font-size: 0.75em;
+      color: #666;
+    }
+
     .today-line {
       position: absolute;
       top: 0;
       width: 2px;
-      background: red;
-      pointer-events: none;
+      background: var(--today-color);
       z-index: 5;
+      height: 100%;
     }
 
-    /* Each row is absolutely positioned below the axis */
+    .today-label {
+      position: absolute;
+      background: var(--today-color);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.7em;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
     .gantt-row {
-      position: absolute;
+      position: relative;
       left: 0;
-      height: 30px; /* or ROW_HEIGHT */
-      z-index: 1; /* base layer */
+      height: var(--row-height);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
     }
 
-    /* Label pinned to the left within the row */
-    .gantt-label {
-      position: absolute;
+    .gantt-row:hover {
+      background-color: var(--hover-color);
+    }
+
+    .gantt-label-container {
+      position: sticky;
       left: 0;
-      width: 130px; /* or LABEL_WIDTH */
-      text-align: right;
-      padding-right: 8px;
-      font-weight: bold;
+      width: var(--label-width);
+      height: 100%;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+    }
+
+    .gantt-label {
+      font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
-      z-index: 3; /* on top of bar */
-      background: #fff; /* so it's not overlapped by the bar */
+      text-overflow: ellipsis;
     }
 
-    /* Green bar representing the timeframe */
-    .gantt-bar {
-      position: absolute;
-      top: 0;
-      height: 30px;
-      background-color: #4CAF50;
+    .gantt-timeline {
+      position: relative;
+      flex-grow: 1;
+      height: 100%;
       z-index: 1;
     }
 
-    /* Orange diamond for oral exam date */
+    .gantt-bar {
+      position: absolute;
+      top: 8px;
+      height: calc(var(--row-height) - 16px);
+      background-color: var(--secondary-color);
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 1;
+      transition: all 0.2s ease;
+    }
+
+    .gantt-bar:hover {
+      filter: brightness(0.95);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      height: calc(var(--row-height) - 12px);
+      top: 6px;
+    }
+
     .exam-marker {
       position: absolute;
-      width: 14px;
-      height: 14px;
-      background-color: orange;
+      width: 16px;
+      height: 16px;
+      background-color: var(--highlight-color);
       transform: rotate(45deg);
-      top: 8px; /* center diamond in 30px row */
-      z-index: 4; /* above bar and label */
+      top: calc((var(--row-height) - 16px) / 2);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 4;
+      transition: all 0.2s ease;
     }
 
-    /* Completion checkbox, placed near the label */
+    .exam-marker:hover {
+      transform: rotate(45deg) scale(1.2);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+
+    .completion-wrapper {
+      width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .completion-checkbox {
-      position: absolute;
-      left: -20px; /* shift left of label */
-      top: 5px;
-      z-index: 4; /* above bar */
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
     }
 
-    /* Info at the bottom */
-    .info {
+    .tooltip {
       position: absolute;
-      left: 0;
-      color: #555;
-      font-size: 0.9em;
-      z-index: 2; /* above the bars but below the diamond if it overlaps */
-      background: #fff;
-      padding: 0.5rem;
-      border-top: 1px solid #ccc;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .gantt-bar:hover + .tooltip,
+    .exam-marker:hover + .tooltip {
+      opacity: 1;
+    }
+
+    .info {
+      padding: 1.5rem;
+      margin-top: 20px;
+      background: var(--bg-color);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .info h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      border-radius: 3px;
+    }
+
+    .legend-diamond {
+      width: 12px;
+      height: 12px;
+      margin-right: 8px;
+      background-color: var(--highlight-color);
+      transform: rotate(45deg);
+    }
+
+    .legend-line {
+      width: 2px;
+      height: 16px;
+      margin-right: 8px;
+      background-color: var(--today-color);
     }
   </style>
 </head>
 <body>
   <div id="chart-container">
     <div class="chart-header">
-      <h1>Improved Gantt Chart (Full Page)</h1>
+      <h1>Improved Gantt Chart</h1>
       <p>
         Loads <code>chapters/chapter_X.json</code> based on <strong>?chapter=X</strong>.
         Example: <code>gantt_improved.html?chapter=1</code>.
       </p>
     </div>
 
-    <!-- We'll create/position everything in JS inside #chart-inner -->
     <div id="chart-inner"></div>
   </div>
 
   <script>
-    // === CONFIGURABLE PARAMETERS ===
-    const PIXELS_PER_DAY = 5;
-    const AXIS_HEIGHT = 30;
-    const ROW_HEIGHT = 30;
-    const LABEL_WIDTH = 130;
-    // ===============================
-
-    // 1. Determine the JSON file from the URL
+    // Get URL parameter for chapter
     const urlParams = new URLSearchParams(window.location.search);
     const chapterParam = urlParams.get("chapter") || "1";
     const jsonPath = `chapters/chapter_${chapterParam}.json`;
 
-    // 2. Fetch the JSON data
-    fetch(jsonPath)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`Error loading JSON: ${res.status} ${res.statusText}`);
-        }
-        return res.json();
-      })
-      .then(chapters => {
-        buildGantt(chapters);
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById("chart-inner").textContent =
-          "Error loading data. Check console for details.";
-      });
+    // Get CSS variables
+    const getVarValue = (name) => {
+      return parseInt(getComputedStyle(document.documentElement).getPropertyValue(name).trim());
+    };
 
+    const PIXELS_PER_DAY = getVarValue('--pixels-per-day');
+    const AXIS_HEIGHT = getVarValue('--axis-height');
+    const ROW_HEIGHT = getVarValue('--row-height');
+    const LABEL_WIDTH = getVarValue('--label-width');
+
+    // Mock data for development/testing
+    const mockData = [
+      {
+        chapter: 1,
+        startDate: "2025-02-01",
+        dueDate: "2025-03-15",
+        oralExamDate: "2025-03-01",
+        oralExamRelevant: true
+      },
+      {
+        chapter: 2,
+        startDate: "2025-02-01",
+        dueDate: "2025-03-15",
+        oralExamDate: "2025-03-03",
+        oralExamRelevant: true
+      },
+      {
+        chapter: 3,
+        startDate: "2025-02-01",
+        dueDate: "2025-03-15", 
+        oralExamDate: "2025-03-05",
+        oralExamRelevant: true
+      },
+      {
+        chapter: 4,
+        startDate: "2025-02-15",
+        dueDate: "2025-04-01",
+        oralExamDate: "2025-03-07",
+        oralExamRelevant: true
+      },
+      {
+        chapter: 5,
+        startDate: "2025-03-01",
+        dueDate: "2025-04-15",
+        oralExamRelevant: false
+      },
+      {
+        chapter: 6,
+        startDate: "2025-03-15",
+        dueDate: "2025-04-30",
+        oralExamRelevant: false
+      },
+      {
+        chapter: 7,
+        startDate: "2025-04-01",
+        dueDate: "2025-05-15",
+        oralExamRelevant: false
+      }
+    ];
+
+    // Parse date strings to Date objects
     function parseDate(dateStr) {
       if (!dateStr) return null;
       const parts = dateStr.split("-");
@@ -185,8 +385,22 @@
       return new Date(year, month - 1, day);
     }
 
+    // Format date to string
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    // Get month name
+    function getMonthName(date) {
+      return date.toLocaleString('default', { month: 'short' }) + ' ' + date.getFullYear();
+    }
+
+    // Main function to build the Gantt chart
     function buildGantt(chapters) {
-      // 1. Parse relevant fields
+      // 1. Process and parse data
       const data = chapters.map(ch => ({
         ...ch,
         start: parseDate(ch.startDate),
@@ -195,143 +409,252 @@
       })).filter(ch => ch.start && ch.due);
 
       if (data.length === 0) {
-        document.getElementById("chart-inner").innerHTML = "<p>No valid startDate/dueDate found.</p>";
+        document.getElementById("chart-inner").innerHTML = 
+          "<p style='padding: 20px;'>No valid chapter data found with startDate/dueDate.</p>";
         return;
       }
 
-      // 2. Determine minStart / maxDue
-      const minStart = new Date(Math.min(...data.map(ch => ch.start)));
-      const maxDue = new Date(Math.max(...data.map(ch => ch.due)));
+      // 2. Determine time range
+      const minStart = new Date(Math.min(...data.map(ch => ch.start.getTime())));
+      const maxDue = new Date(Math.max(...data.map(ch => ch.due.getTime())));
+      
+      // Add some padding to the start and end dates
+      minStart.setDate(minStart.getDate() - 7);  
+      maxDue.setDate(maxDue.getDate() + 7);
+
       const msPerDay = 1000 * 60 * 60 * 24;
       const totalDays = Math.round((maxDue - minStart) / msPerDay);
 
-      // 3. Calculate the needed width/height
-      const chartWidth = totalDays * PIXELS_PER_DAY + LABEL_WIDTH + 50; 
-      // +50 as a little buffer on the right
-      const chartHeight = AXIS_HEIGHT + data.length * ROW_HEIGHT + 100; 
-      // +100 for info text at bottom
+      // 3. Calculate dimensions
+      const chartWidth = totalDays * PIXELS_PER_DAY + LABEL_WIDTH + 50;
+      const chartHeight = data.length * ROW_HEIGHT + AXIS_HEIGHT + 150;
 
       const chartInner = document.getElementById("chart-inner");
       chartInner.style.width = chartWidth + "px";
-      chartInner.style.height = chartHeight + "px";
+      chartInner.style.minHeight = chartHeight + "px";
 
-      // === CREATE THE DATE AXIS ===
+      // 4. Create the time axis
       const axis = document.createElement("div");
       axis.className = "date-axis";
-      axis.style.width = (chartWidth - LABEL_WIDTH) + "px"; // axis spans only the timeline
-      axis.style.left = LABEL_WIDTH + "px";
-      axis.style.height = AXIS_HEIGHT + "px";
+      axis.style.width = chartWidth + "px";
+      axis.style.left = "0px";
       chartInner.appendChild(axis);
 
-      // Weekly ticks
-      for (let d = new Date(minStart); d <= maxDue; d.setDate(d.getDate() + 7)) {
-        const offsetDays = Math.round((d - minStart) / msPerDay);
-        const xPos = offsetDays * PIXELS_PER_DAY;
-        
-        // Tick line
-        const tick = document.createElement("div");
-        tick.className = "date-tick";
-        tick.style.left = xPos + "px";
-        axis.appendChild(tick);
+      // Create month and day rows for the axis
+      const monthRow = document.createElement("div");
+      monthRow.className = "month-row";
+      axis.appendChild(monthRow);
 
-        // Label
-        const label = document.createElement("div");
-        label.className = "date-label";
-        label.style.left = xPos + "px";
-        const mm = String(d.getMonth() + 1).padStart(2, "0");
-        const dd = String(d.getDate()).padStart(2, "0");
-        label.textContent = `${d.getFullYear()}-${mm}-${dd}`;
-        axis.appendChild(label);
+      const dayRow = document.createElement("div");
+      dayRow.className = "day-row";
+      axis.appendChild(dayRow);
+
+      // Track months to avoid duplicates
+      let currentMonth = null;
+      let monthStart = null;
+
+      // Create ticks and labels for each day
+      for (let d = new Date(minStart); d <= maxDue; d.setDate(d.getDate() + 1)) {
+        const offsetDays = Math.round((d - minStart) / msPerDay);
+        const xPos = offsetDays * PIXELS_PER_DAY + LABEL_WIDTH;
+        const thisMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+        
+        // Week ticks (Sunday or first day of month)
+        if (d.getDay() === 0 || d.getDate() === 1) {
+          const weekTick = document.createElement("div");
+          weekTick.className = "week-tick";
+          weekTick.style.left = xPos + "px";
+          dayRow.appendChild(weekTick);
+          
+          const dayLabel = document.createElement("div");
+          dayLabel.className = "day-label";
+          dayLabel.style.left = xPos + "px";
+          dayLabel.textContent = d.getDate();
+          dayRow.appendChild(dayLabel);
+        } else {
+          // Regular day ticks
+          const dayTick = document.createElement("div");
+          dayTick.className = "day-tick";
+          dayTick.style.left = xPos + "px";
+          dayRow.appendChild(dayTick);
+        }
+        
+        // Month separators and labels
+        if (!currentMonth || d.getMonth() !== currentMonth.getMonth() || 
+            d.getFullYear() !== currentMonth.getFullYear()) {
+            
+          // Close previous month
+          if (currentMonth) {
+            const monthEnd = offsetDays * PIXELS_PER_DAY + LABEL_WIDTH;
+            const monthWidth = monthEnd - monthStart;
+          }
+          
+          // Start new month
+          currentMonth = new Date(d);
+          monthStart = offsetDays * PIXELS_PER_DAY + LABEL_WIDTH;
+          
+          const monthTick = document.createElement("div");
+          monthTick.className = "month-tick";
+          monthTick.style.left = monthStart + "px";
+          monthRow.appendChild(monthTick);
+          
+          const monthLabel = document.createElement("div");
+          monthLabel.className = "month-label";
+          monthLabel.style.left = monthStart + "px";
+          monthLabel.textContent = getMonthName(d);
+          monthRow.appendChild(monthLabel);
+        }
       }
 
-      // === TODAY LINE ===
+      // 5. Create "Today" line if in range
       const today = new Date();
       if (today >= minStart && today <= maxDue) {
         const offsetToday = Math.round((today - minStart) / msPerDay);
         const todayX = offsetToday * PIXELS_PER_DAY + LABEL_WIDTH;
+        
         const todayLine = document.createElement("div");
         todayLine.className = "today-line";
         todayLine.style.left = todayX + "px";
         todayLine.style.height = chartHeight + "px";
         chartInner.appendChild(todayLine);
+        
+        const todayLabel = document.createElement("div");
+        todayLabel.className = "today-label";
+        todayLabel.style.left = todayX + "px";
+        todayLabel.style.top = AXIS_HEIGHT + "px";
+        todayLabel.textContent = "TODAY";
+        chartInner.appendChild(todayLabel);
       }
 
-      // === ROWS (CHAPTERS) ===
+      // 6. Create chapter rows
       data.forEach((ch, i) => {
-        const rowTop = AXIS_HEIGHT + i * ROW_HEIGHT;
-
-        // Create a row container
+        // Row container
         const rowDiv = document.createElement("div");
         rowDiv.className = "gantt-row";
-        rowDiv.style.top = rowTop + "px";
-        rowDiv.style.width = chartWidth + "px"; 
-        rowDiv.style.height = ROW_HEIGHT + "px";
+        rowDiv.style.top = (AXIS_HEIGHT + i * ROW_HEIGHT) + "px";
         chartInner.appendChild(rowDiv);
 
-        // Label
-        const labelSpan = document.createElement("span");
+        // Label container (sticky)
+        const labelContainer = document.createElement("div");
+        labelContainer.className = "gantt-label-container";
+        rowDiv.appendChild(labelContainer);
+        
+        // Checkbox
+        const checkboxWrapper = document.createElement("div");
+        checkboxWrapper.className = "completion-wrapper";
+        labelContainer.appendChild(checkboxWrapper);
+        
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "completion-checkbox";
+        checkbox.id = `chapter-${ch.chapter}-complete`;
+        const storageKey = `gantt-chapter${chapterParam}-${ch.chapter}-completed`;
+        checkbox.checked = localStorage.getItem(storageKey) === "true";
+        checkbox.addEventListener("change", () => {
+          localStorage.setItem(storageKey, checkbox.checked.toString());
+        });
+        checkboxWrapper.appendChild(checkbox);
+        
+        // Label text
+        const labelSpan = document.createElement("div");
         labelSpan.className = "gantt-label";
         labelSpan.textContent = `Chapter ${ch.chapter}`;
-        labelSpan.style.top = "0px";
-        rowDiv.appendChild(labelSpan);
+        labelContainer.appendChild(labelSpan);
 
-        // The bar offset
+        // Timeline container
+        const timelineDiv = document.createElement("div");
+        timelineDiv.className = "gantt-timeline";
+        rowDiv.appendChild(timelineDiv);
+        
+        // Bar calculations
         const offsetDays = Math.round((ch.start - minStart) / msPerDay);
-        const barLeft = offsetDays * PIXELS_PER_DAY + LABEL_WIDTH;
-
-        // The bar width
+        const barLeft = offsetDays * PIXELS_PER_DAY;
         const durationDays = Math.round((ch.due - ch.start) / msPerDay);
         const barWidth = durationDays * PIXELS_PER_DAY;
 
-        // The bar
+        // Create the bar
         const barDiv = document.createElement("div");
         barDiv.className = "gantt-bar";
         barDiv.style.left = barLeft + "px";
         barDiv.style.width = barWidth + "px";
-        barDiv.title = `Start: ${ch.startDate} | Due: ${ch.dueDate}`;
-        rowDiv.appendChild(barDiv);
+        timelineDiv.appendChild(barDiv);
+        
+        // Bar tooltip
+        const barTooltip = document.createElement("div");
+        barTooltip.className = "tooltip";
+        barTooltip.style.left = (barLeft + barWidth/2) + "px";
+        barTooltip.style.top = "-25px";
+        barTooltip.textContent = `Start: ${ch.startDate} | Due: ${ch.dueDate}`;
+        timelineDiv.appendChild(barTooltip);
 
         // Oral exam diamond if relevant
         if (ch.oralExamRelevant === true && ch.exam) {
           if (ch.exam >= minStart && ch.exam <= maxDue) {
             const examOffset = Math.round((ch.exam - minStart) / msPerDay);
-            const examLeft = examOffset * PIXELS_PER_DAY + LABEL_WIDTH;
+            const examLeft = examOffset * PIXELS_PER_DAY;
+            
             const examMarker = document.createElement("div");
             examMarker.className = "exam-marker";
             examMarker.style.left = examLeft + "px";
-            examMarker.title = `Oral Exam: ${ch.oralExamDate}`;
-            rowDiv.appendChild(examMarker);
+            timelineDiv.appendChild(examMarker);
+            
+            // Exam tooltip
+            const examTooltip = document.createElement("div");
+            examTooltip.className = "tooltip";
+            examTooltip.style.left = examLeft + "px";
+            examTooltip.style.top = "-25px";
+            examTooltip.textContent = `Oral Exam: ${ch.oralExamDate}`;
+            timelineDiv.appendChild(examTooltip);
           }
         }
-
-        // Completion checkbox
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.className = "completion-checkbox";
-        const storageKey = `improved-gantt-chapter${chapterParam}-row${i}-completed`;
-        checkbox.checked = localStorage.getItem(storageKey) === "true";
-        checkbox.addEventListener("change", () => {
-          localStorage.setItem(storageKey, checkbox.checked.toString());
-        });
-        rowDiv.appendChild(checkbox);
       });
 
-      // === INFO/LEGEND AT BOTTOM ===
+      // 7. Info/Legend section
       const infoDiv = document.createElement("div");
       infoDiv.className = "info";
-      infoDiv.style.top = (AXIS_HEIGHT + data.length * ROW_HEIGHT + 10) + "px";
+      infoDiv.style.top = (AXIS_HEIGHT + data.length * ROW_HEIGHT + 20) + "px";
       infoDiv.style.width = chartWidth + "px";
+      
       infoDiv.innerHTML = `
-        <p><strong>Legend:</strong></p>
-        <ul>
-          <li>Green bar: <em>startDate</em> to <em>dueDate</em>.</li>
-          <li>Red line: "Today" (if in range).</li>
-          <li>Orange diamond: <em>oralExamDate</em> (if relevant).</li>
-          <li>Checkbox: Mark chapter as completed (saved in Local Storage).</li>
-        </ul>
+        <h3>Legend</h3>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: var(--secondary-color);"></div>
+            <span>Timeline from <strong>startDate</strong> to <strong>dueDate</strong></span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-diamond"></div>
+            <span>Oral exam date (<strong>oralExamDate</strong>)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-line"></div>
+            <span>Today's date</span>
+          </div>
+          <div class="legend-item">
+            <input type="checkbox" disabled>
+            <span style="margin-left: 8px;">Mark chapter as completed (saved in browser storage)</span>
+          </div>
+        </div>
       `;
       chartInner.appendChild(infoDiv);
     }
+
+    // Try to load real data, fall back to mock data for development
+    fetch(jsonPath)
+      .then(res => {
+        if (!res.ok) {
+          console.warn(`Warning: ${jsonPath} not found, using mock data instead.`);
+          throw new Error("File not found");
+        }
+        return res.json();
+      })
+      .then(chapters => {
+        buildGantt(chapters);
+      })
+      .catch(err => {
+        console.log("Using mock data instead:", err);
+        buildGantt(mockData);
+      });
   </script>
 </body>
 </html>
