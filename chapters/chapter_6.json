@@ -7,9 +7,10 @@
       "2"
     ],
     "startDate": "2025-02-18",
-    "dueDate": "2025-04-01",
+    "dueDate": "2025-03-18",
     "oralExamRelevant": true,
-    "oralExamDate": "2025-03-15"
+    "oralExamDate": "2025-03-04",
+    "writtenExamDate": "2025-04-01"
   },
   {
     "chapter": 2,
@@ -19,9 +20,10 @@
       "2"
     ],
     "startDate": "2025-02-18",
-    "dueDate": "2025-04-01",
+    "dueDate": "2025-03-18",
     "oralExamRelevant": true,
-    "oralExamDate": "2025-03-16"
+    "oralExamDate": "2025-03-04",
+    "writtenExamDate": "2025-04-01"
   },
   {
     "chapter": 3,
@@ -33,7 +35,8 @@
     "startDate": "2025-03-11",
     "dueDate": "2025-04-01",
     "oralExamRelevant": true,
-    "oralExamDate": "2025-03-17"
+    "oralExamDate": "2025-03-18",
+    "writtenExamDate": "2025-04-01"
   },
   {
     "chapter": 4,
@@ -45,7 +48,8 @@
     "startDate": "2025-03-11",
     "dueDate": "2025-04-01",
     "oralExamRelevant": true,
-    "oralExamDate": "2025-03-18"
+    "oralExamDate": "2025-03-18",
+    "writtenExamDate": "2025-04-01"
   },
   {
     "chapter": 5,
@@ -62,7 +66,8 @@
     "startDate": "2025-03-18",
     "dueDate": "2025-04-01",
     "oralExamRelevant": null,
-    "oralExamDate": null
+    "oralExamDate": null,
+    "writtenExamDate": null
   },
   {
     "chapter": 6,
@@ -79,7 +84,8 @@
     "startDate": "2025-03-18",
     "dueDate": "2025-04-01",
     "oralExamRelevant": null,
-    "oralExamDate": null
+    "oralExamDate": null,
+    "writtenExamDate": null
   },
   {
     "chapter": 7,
@@ -96,6 +102,7 @@
     "startDate": "2025-03-18",
     "dueDate": "2025-04-01",
     "oralExamRelevant": null,
-    "oralExamDate": null
+    "oralExamDate": null,
+    "writtenExamDate": null
   }
 ]

@@ -8,6 +8,7 @@
       --primary-color: #3498db;
       --secondary-color: #2ecc71;
       --highlight-color: #f39c12;
+      --written-exam-color: #9b59b6; /* New color for written exams */
       --today-color: #e74c3c;
       --border-color: #ddd;
       --text-color: #333;
@@ -73,6 +74,13 @@
       margin-right: 8px;
       background-color: var(--highlight-color);
       transform: rotate(45deg);
+    }
+
+    .legend-square {
+      width: 12px;
+      height: 12px;
+      margin-right: 8px;
+      background-color: var(--written-exam-color);
     }
 
     #chart-inner {
@@ -244,6 +252,23 @@
       box-shadow: 0 3px 8px rgba(0,0,0,0.3);
     }
 
+    /* New style for written exam marker */
+    .written-exam-marker {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background-color: var(--written-exam-color);
+      top: calc((var(--row-height) - 16px) / 2);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 4;
+      transition: all 0.2s ease;
+    }
+
+    .written-exam-marker:hover {
+      transform: scale(1.2);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+
     .completion-wrapper {
       width: 24px;
       display: flex;
@@ -273,6 +298,7 @@
 
     .gantt-bar:hover + .tooltip,
     .exam-marker:hover + .tooltip,
+    .written-exam-marker:hover + .tooltip,
     .due-symbol:hover + .tooltip {
       opacity: 1;
     }
@@ -286,6 +312,10 @@
         <div class="legend-item">
           <div class="legend-diamond"></div>
           <span>Mündliche Prüfungen</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-square"></div>
+          <span>Schriftliche Prüfungen</span>
         </div>
       </div>
     </div>
@@ -341,7 +371,8 @@
         ...ch,
         start: parseDate(ch.startDate),
         due: parseDate(ch.dueDate),
-        exam: parseDate(ch.oralExamDate)
+        exam: parseDate(ch.oralExamDate),
+        writtenExam: parseDate(ch.writtenExamDate) // Parse written exam date
       })).filter(ch => ch.start && ch.due);
 
       if (data.length === 0) {
@@ -352,7 +383,13 @@
 
       // 2. Determine time range
       const minStart = new Date(Math.min(...data.map(ch => ch.start.getTime())));
-      const maxDue = new Date(Math.max(...data.map(ch => ch.due.getTime())));
+      
+      // Include written exam dates in max range calculation
+      const allDueDates = data.map(ch => ch.due.getTime());
+      const allOralExamDates = data.filter(ch => ch.exam).map(ch => ch.exam.getTime());
+      const allWrittenExamDates = data.filter(ch => ch.writtenExam).map(ch => ch.writtenExam.getTime());
+      const allEndDates = [...allDueDates, ...allOralExamDates, ...allWrittenExamDates];
+      const maxDue = new Date(Math.max(...allEndDates));
       
       // Add some padding to the start and end dates
       minStart.setDate(minStart.getDate() - 7);  
@@ -555,6 +592,25 @@
             examTooltip.textContent = `Oral Exam: ${ch.oralExamDate}`;
             timelineDiv.appendChild(examTooltip);
           }
+        }
+        
+        // Written exam square marker if date exists
+        if (ch.writtenExam && ch.writtenExam >= minStart && ch.writtenExam <= maxDue) {
+          const writtenExamOffset = Math.round((ch.writtenExam - minStart) / msPerDay);
+          const writtenExamLeft = writtenExamOffset * PIXELS_PER_DAY;
+          
+          const writtenExamMarker = document.createElement("div");
+          writtenExamMarker.className = "written-exam-marker";
+          writtenExamMarker.style.left = writtenExamLeft + "px";
+          timelineDiv.appendChild(writtenExamMarker);
+          
+          // Written exam tooltip
+          const writtenExamTooltip = document.createElement("div");
+          writtenExamTooltip.className = "tooltip";
+          writtenExamTooltip.style.left = writtenExamLeft + "px";
+          writtenExamTooltip.style.top = "-25px";
+          writtenExamTooltip.textContent = `Written Exam: ${ch.writtenExamDate}`;
+          timelineDiv.appendChild(writtenExamTooltip);
         }
       });
     }
