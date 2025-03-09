@@ -6,7 +6,7 @@
       "1",
       "2"
     ],
-    "startDate": "2025-03-31",
+    "startDate": "2025-02-12",
     "dueDate": "2025-05-31",
     "oralExamRelevant": true,
     "oralExamDate": "2025-04-15"
@@ -18,7 +18,7 @@
       "1",
       "2"
     ],
-    "startDate": "2025-03-31",
+    "startDate": "2025-02-12",
     "dueDate": "2025-05-31",
     "oralExamRelevant": true,
     "oralExamDate": "2025-04-16"
@@ -30,7 +30,7 @@
       "3",
       "4"
     ],
-    "startDate": "2025-03-31",
+    "startDate": "2025-02-12",
     "dueDate": "2025-05-31",
     "oralExamRelevant": true,
     "oralExamDate": "2025-04-17"
@@ -42,7 +42,7 @@
       "3",
       "4"
     ],
-    "startDate": "2025-03-31",
+    "startDate": "2025-02-12",
     "dueDate": "2025-05-31",
     "oralExamRelevant": true,
     "oralExamDate": "2025-04-18"
@@ -59,7 +59,7 @@
       "6",
       "7"
     ],
-    "startDate": "2025-03-31",
+    "startDate": "2025-02-12",
     "dueDate": "2025-05-31",
     "oralExamRelevant": null,
     "oralExamDate": null
@@ -76,7 +76,7 @@
       "6",
       "7"
     ],
-    "startDate": "2025-03-31",
+    "startDate": "2025-02-12",
     "dueDate": "2025-05-31",
     "oralExamRelevant": null,
     "oralExamDate": null
@@ -88,12 +88,12 @@
       "6",
       "7"
     ],
-    "startDate": "2025-03-31",
     "vertiefung": [
       "5",
       "6",
       "7"
     ],
+    "startDate": "2025-01-31",
     "dueDate": "2025-05-31",
     "oralExamRelevant": null,
     "oralExamDate": null
