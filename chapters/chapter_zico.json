@@ -1,102 +1,108 @@
 [
     {
-        "chapter": "Lohnbestandteile",
-        "lehrmittel": true,
-        "vertiefung": true,
-        "startDate": "2025-02-18",
-        "dueDate": "2025-03-18",
-        "oralExamRelevant": true,
-        "oralExamDate": "2025-03-04",
-        "writtenExamDate": "2025-02-19"
+      "chapter": 1,
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2"
+      ],
+      "startDate": "2025-02-18",
+      "dueDate": "2025-03-18",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-04",
+      "writtenExamDate": "2025-02-19"
     },
     {
-        "chapter": "Budget",
-        "lehrmittel": true,
-        "vertiefung": [
-            "2",
-            "3"
-        ],
-        "startDate": "2025-02-18",
-        "dueDate": "2025-03-18",
-        "oralExamRelevant": true,
-        "oralExamDate": "2025-03-04",
-        "writtenExamDate": "2025-02-19"
+      "chapter": 2,
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2"
+      ],
+      "startDate": "2025-02-18",
+      "dueDate": "2025-03-18",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-04",
+      "writtenExamDate": "2025-02-19"
     },
     {
-        "chapter": "Zahlungsarten",
-        "lehrmittel": [
-            "4",
-            "6",
-            "7"
-        ],
-        "vertiefung": [
-            "2",
-            "3"
-        ],
-        "startDate": "2025-03-11",
-        "dueDate": "2025-04-01",
-        "oralExamRelevant": true,
-        "oralExamDate": "2025-03-25",
-        "writtenExamDate": "2025-04-02"
+      "chapter": 3,
+      "lehrmittel": true,
+      "vertiefung": [
+        "3",
+        "4"
+      ],
+      "startDate": "2025-03-11",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-25",
+      "writtenExamDate": "2025-04-02"
     },
     {
-        "chapter": "Kaufvertragsarten Teil I",
-        "lehrmittel": true,
-        "vertiefung": true,
-        "startDate": "2025-03-11",
-        "dueDate": "2025-04-01",
-        "oralExamRelevant": true,
-        "oralExamDate": "2025-03-25",
-        "writtenExamDate": "2025-04-02"
+      "chapter": 4,
+      "lehrmittel": true,
+      "vertiefung": [
+        "3",
+        "4"
+      ],
+      "startDate": "2025-03-11",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-25",
+      "writtenExamDate": "2025-04-02"
     },
     {
-        "chapter": "Vertragsarten",
-        "lehrmittel": [
-            "4",
-            "6",
-            "7"
-        ],
-        "vertiefung": [
-            "6",
-            "7",
-            "8"
-        ],
-        "startDate": "2025-03-18",
-        "dueDate": "2025-04-01",
-        "oralExamRelevant": null,
-        "oralExamDate": null,
-        "writtenExamDate": null
+      "chapter": 5,
+      "lehrmittel": [
+        "5",
+        "6",
+        "7"
+      ],
+      "vertiefung": [
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-03-18",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
     },
     {
-        "chapter": "Geldanlagemöglichkeiten",
-        "lehrmittel": [
-            "4",
-            "6",
-            "7"
-        ],
-        "vertiefung": [
-            "6",
-            "7",
-            "8"
-        ],
-        "startDate": "2025-03-18",
-        "dueDate": "2025-04-01",
-        "oralExamRelevant": null,
-        "oralExamDate": null,
-        "writtenExamDate": null
+      "chapter": 6,
+      "lehrmittel": [
+        "5",
+        "6",
+        "7"
+      ],
+      "vertiefung": [
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-03-18",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
     },
     {
-        "chapter": "Preisbildung",
-        "lehrmittel": true,
-        "vertiefung": [
-            "6",
-            "7",
-            "8"
-        ],
-        "startDate": "2025-03-18",
-        "dueDate": "2025-04-01",
-        "oralExamRelevant": null,
-        "oralExamDate": null,
-        "writtenExamDate": "2025-04-02"
+      "chapter": 7,
+      "lehrmittel": [
+        "5",
+        "6",
+        "7"
+      ],
+      "vertiefung": [
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-03-18",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
     }
 ]
