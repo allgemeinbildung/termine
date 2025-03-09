@@ -1,6 +1,6 @@
 [
   {
-    "chapter": 1,
+    "chapter": "Die wichtigsten Aufgaben eines Staates",
     "lehrmittel": true,
     "vertiefung": [
       "1",
@@ -13,7 +13,7 @@
     "writtenExamDate": "2025-02-19"
   },
   {
-    "chapter": 2,
+    "chapter": "Bundesstaat Schweiz",
     "lehrmittel": true,
     "vertiefung": [
       "1",
@@ -26,7 +26,7 @@
     "writtenExamDate": "2025-02-19"
   },
   {
-    "chapter": 3,
+    "chapter": "Gewaltenteilung",
     "lehrmittel": true,
     "vertiefung": [
       "3",
@@ -39,7 +39,7 @@
     "writtenExamDate": "2025-04-02"
   },
   {
-    "chapter": 4,
+    "chapter": "Referendum und Initiative",
     "lehrmittel": true,
     "vertiefung": [
       "3",
@@ -52,7 +52,7 @@
     "writtenExamDate": "2025-04-02"
   },
   {
-    "chapter": 5,
+    "chapter": "Enstehung eines Gesetzes",
     "lehrmittel": [
       "5",
       "6",
@@ -70,7 +70,7 @@
     "writtenExamDate": null
   },
   {
-    "chapter": 6,
+    "chapter": "Interessengruppen",
     "lehrmittel": [
       "5",
       "6",
@@ -88,7 +88,7 @@
     "writtenExamDate": null
   },
   {
-    "chapter": 7,
+    "chapter": "Übersicht Kanton Zürich",
     "lehrmittel": [
       "5",
       "6",
