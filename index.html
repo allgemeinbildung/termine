@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chapter Overview</title>
+  <!-- Optional: Link to an external CSS file for styling
+       <link rel="stylesheet" href="styles.css" />
+  -->
+  <style>
+    /* Minimal styling for readability */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 1em;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f3f3f3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chapter Overview</h1>
+  <p>
+    This page loads JSON data from a <code>chapters/chapter_X.json</code> file based on the URL query parameter 
+    <strong>?chapter=X</strong>. For example, <code>?chapter=1</code> loads <code>chapters/chapter_1.json</code>.
+  </p>
+  <div id="table-container"></div>
+
+  <script>
+    // 1. Get the 'chapter' query parameter from the URL (default to "1" if none)
+    const urlParams = new URLSearchParams(window.location.search);
+    const chapterParam = urlParams.get('chapter') || "1";
+
+    // 2. Build the path to the JSON file in the 'chapters' subfolder
+    const jsonPath = `chapters/chapter_${chapterParam}.json`;
+
+    // 3. Fetch the JSON data
+    fetch(jsonPath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Unable to load JSON: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // 'data' should be an array of chapter objects
+        createChapterTable(data);
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById('table-container').textContent =
+          "Error loading chapter data. Check console for details.";
+      });
+
+    // 4. Function to create and insert the table into the page
+    function createChapterTable(chapters) {
+      // Create table elements
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+
+      // Define table headers
+      thead.innerHTML = `
+        <tr>
+          <th>Chapter</th>
+          <th>Lehrmittel</th>
+          <th>Vertiefung</th>
+          <th>Due Date</th>
+          <th>Oral Exam Relevant</th>
+          <th>Oral Exam Date</th>
+          <th>Completed?</th>
+        </tr>
+      `;
+
+      // Populate table rows
+      chapters.forEach((ch, index) => {
+        const tr = document.createElement('tr');
+
+        // Utility: Convert arrays/booleans to a nice display string
+        function formatValue(value) {
+          if (Array.isArray(value)) {
+            return value.join(", ");
+          } else if (value === true) {
+            return "Yes";
+          } else if (value === false) {
+            return "No";
+          }
+          return value ?? ""; // empty string if null/undefined
+        }
+
+        // Create cells
+        const tdChapter = document.createElement('td');
+        tdChapter.textContent = formatValue(ch.chapter);
+        tr.appendChild(tdChapter);
+
+        const tdLehrmittel = document.createElement('td');
+        tdLehrmittel.textContent = formatValue(ch.lehrmittel);
+        tr.appendChild(tdLehrmittel);
+
+        const tdVertiefung = document.createElement('td');
+        tdVertiefung.textContent = formatValue(ch.vertiefung);
+        tr.appendChild(tdVertiefung);
+
+        const tdDueDate = document.createElement('td');
+        tdDueDate.textContent = formatValue(ch.dueDate);
+        tr.appendChild(tdDueDate);
+
+        const tdOralExamRelevant = document.createElement('td');
+        tdOralExamRelevant.textContent = formatValue(ch.oralExamRelevant);
+        tr.appendChild(tdOralExamRelevant);
+
+        const tdOralExamDate = document.createElement('td');
+        tdOralExamDate.textContent = formatValue(ch.oralExamDate);
+        tr.appendChild(tdOralExamDate);
+
+        // Local completion tracking: a checkbox per row
+        const tdCompleted = document.createElement('td');
+        const checkbox = document.createElement('input');
+        checkbox.type = "checkbox";
+
+        // Create a unique key for localStorage
+        const storageKey = `chapter${chapterParam}-row${index}-completed`;
+
+        // Restore saved state from localStorage
+        checkbox.checked = localStorage.getItem(storageKey) === "true";
+
+        // On change, store the new state
+        checkbox.addEventListener('change', () => {
+          localStorage.setItem(storageKey, checkbox.checked.toString());
+        });
+
+        tdCompleted.appendChild(checkbox);
+        tr.appendChild(tdCompleted);
+
+        // Add row to table body
+        tbody.appendChild(tr);
+      });
+
+      // Assemble table
+      table.appendChild(thead);
+      table.appendChild(tbody);
+
+      // Insert into the page
+      document.getElementById('table-container').appendChild(table);
+    }
+  </script>
+</body>
+</html>
