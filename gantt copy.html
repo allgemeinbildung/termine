@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gantt Chart View</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .gantt-row {
+      margin-bottom: 20px;
+    }
+    .gantt-label {
+      display: inline-block;
+      width: 120px;
+      font-weight: bold;
+      vertical-align: top;
+    }
+    .gantt-bar-container {
+      display: inline-block;
+      position: relative;
+      height: 20px;
+      background-color: #e0e0e0;
+      vertical-align: middle;
+    }
+    .gantt-bar {
+      height: 100%;
+      background-color: #4CAF50;
+    }
+    .today-line {
+      position: absolute;
+      width: 2px;
+      height: 100%;
+      background-color: red;
+    }
+    .completion-checkbox {
+      margin-left: 15px;
+      vertical-align: middle;
+    }
+    .info {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gantt Chart View</h1>
+  <p>
+    This page loads JSON data from the <code>chapters</code> folder based on the <strong>?chapter=X</strong> query parameter 
+    (e.g., <code>gantt.html?chapter=1</code> loads <code>chapters/chapter_1.json</code>).
+  </p>
+
+  <div id="gantt-container"></div>
+
+  <div class="info">
+    <p><strong>Notes:</strong></p>
+    <ul>
+      <li>The green bar represents the timeframe from the <em>startDate</em> to the <em>dueDate</em>.</li>
+      <li>The red vertical line shows today's date if it falls within that range.</li>
+      <li>Use the checkbox to mark the row as completed; the state is stored locally.</li>
+    </ul>
+  </div>
+
+  <script>
+    // Retrieve chapter query parameter (default to "1" if not provided)
+    const urlParams = new URLSearchParams(window.location.search);
+    const chapterParam = urlParams.get('chapter') || "1";
+    const jsonPath = `chapters/chapter_${chapterParam}.json`;
+
+    // Helper to parse dates in "YYYY-MM-DD" format.
+    function parseDate(dateStr) {
+      if (!dateStr) return null;
+      const parts = dateStr.split("-");
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+      }
+      return null;
+    }
+
+    // Fetch JSON data from the specified file
+    fetch(jsonPath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Error loading JSON: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        createGanttChart(data);
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById('gantt-container').textContent =
+          "Error loading data. Check console for details.";
+      });
+
+    function createGanttChart(chapters) {
+      const container = document.getElementById('gantt-container');
+      const today = new Date();
+      const scale = 5; // pixels per day
+
+      chapters.forEach((item, index) => {
+        // Parse startDate and dueDate
+        const startDate = parseDate(item.startDate);
+        const dueDate = parseDate(item.dueDate);
+        if (!startDate || !dueDate) return; // Skip if dates are missing
+
+        // Calculate total duration (in days) and the width of the bar
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const totalDurationDays = Math.round((dueDate - startDate) / msPerDay);
+        const totalWidth = totalDurationDays * scale;
+
+        // Calculate days from start for today's date
+        const daysFromStart = Math.round((today - startDate) / msPerDay);
+        let todayOffset = daysFromStart * scale;
+        // Only show today's line if today is within the timeframe.
+        const showToday = (today >= startDate && today <= dueDate);
+
+        // Create the row container
+        const row = document.createElement('div');
+        row.className = 'gantt-row';
+
+        // Label for the chapter
+        const label = document.createElement('span');
+        label.className = 'gantt-label';
+        label.textContent = `Chapter ${item.chapter}`;
+        row.appendChild(label);
+
+        // Container for the bar (fixed width based on total duration)
+        const barContainer = document.createElement('div');
+        barContainer.className = 'gantt-bar-container';
+        barContainer.style.width = totalWidth + 'px';
+
+        // The full bar representing the timeframe
+        const bar = document.createElement('div');
+        bar.className = 'gantt-bar';
+        bar.style.width = totalWidth + 'px';
+        bar.title = `Start: ${item.startDate}, Due: ${item.dueDate}`;
+        barContainer.appendChild(bar);
+
+        // If today is within the timeframe, add a vertical line for today's date
+        if (showToday) {
+          const todayLine = document.createElement('div');
+          todayLine.className = 'today-line';
+          // Clamp the position between 0 and totalWidth
+          todayLine.style.left = Math.min(Math.max(todayOffset, 0), totalWidth - 2) + 'px';
+          todayLine.title = "Today";
+          barContainer.appendChild(todayLine);
+        }
+
+        row.appendChild(barContainer);
+
+        // Local completion checkbox
+        const checkboxWrapper = document.createElement('span');
+        checkboxWrapper.className = 'completion-checkbox';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+
+        const storageKey = `gantt-chapter${chapterParam}-row${index}-completed`;
+        checkbox.checked = localStorage.getItem(storageKey) === "true";
+        checkbox.addEventListener('change', () => {
+          localStorage.setItem(storageKey, checkbox.checked.toString());
+        });
+        checkboxWrapper.appendChild(checkbox);
+        row.appendChild(checkboxWrapper);
+
+        container.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
