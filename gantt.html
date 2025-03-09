@@ -1,39 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Improved Gantt Chart</title>
+  <meta charset="UTF-8">
+  <title>Improved Gantt Chart (Full-Page)</title>
   <style>
-    body {
+    /* Make the page and container occupy the full viewport. */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* We'll let the main container scroll. */
       font-family: Arial, sans-serif;
-      margin: 20px;
     }
 
-    h1 {
-      margin-bottom: 0.5em;
-    }
-
+    /* Main chart container: scrollable if content exceeds window size. */
     #chart-container {
       position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      box-sizing: border-box;
       border: 1px solid #ccc;
-      margin-top: 1em;
-      overflow: hidden; /* Ensures bars and axis are clipped if too wide */
+      background: #fff;
+      padding: 1rem; /* Some padding inside the container */
     }
 
-    /* The horizontal axis at the top */
+    /* Title / description at top, inside container so it can scroll too. */
+    .chart-header {
+      margin-bottom: 1rem;
+    }
+
+    /* The date-axis area (the horizontal ruler at the top) */
     .date-axis {
       position: absolute;
       top: 0;
       left: 0;
       height: 30px;
-      border-bottom: 1px solid #999;
       background: #f9f9f9;
+      border-bottom: 1px solid #999;
     }
     .date-tick {
       position: absolute;
       top: 0;
-      height: 100%;
       width: 1px;
+      height: 100%;
       background: #999;
     }
     .date-label {
@@ -44,93 +55,98 @@
       color: #333;
     }
 
-    /* Each row (chapter) is positioned absolutely within the chart */
-    .gantt-row {
-      position: absolute;
-      left: 0;
-      height: 20px;
-      display: flex;
-      align-items: center;
-    }
-
-    /* The label for the chapter, pinned to the left side outside the chart area */
-    .gantt-label {
-      position: absolute;
-      left: -120px;
-      width: 110px;
-      text-align: right;
-      padding-right: 10px;
-      font-weight: bold;
-    }
-
-    /* The bar representing the time span */
-    .gantt-bar {
-      position: absolute;
-      top: 0;
-      height: 20px;
-      background-color: #4CAF50;
-    }
-
-    /* The "today" line */
+    /* "Today" line spans entire chart height. */
     .today-line {
       position: absolute;
       top: 0;
       width: 2px;
-      height: 100%;
       background: red;
-      pointer-events: none; /* let clicks pass through */
+      pointer-events: none;
     }
 
-    /* Completion checkbox placed at the right end of the bar or next to the label */
+    /* Each row (chapter) is placed absolutely in the chart. */
+    .gantt-row {
+      position: absolute;
+      left: 0;
+      height: 30px; /* row height */
+    }
+
+    /* Chapter label pinned to the left portion of the row. */
+    .gantt-label {
+      position: absolute;
+      left: 0;
+      width: 130px;
+      text-align: right;
+      padding-right: 10px;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* The main bar area to the right of the label. */
+    .gantt-bar {
+      position: absolute;
+      top: 0;
+      height: 30px;
+      background-color: #4CAF50;
+    }
+
+    /* A small diamond marker to show oral exam date. */
+    .exam-marker {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: orange;
+      transform: rotate(45deg);
+      top: 10px; /* roughly centered in a 30px row */
+    }
+
+    /* The completion checkbox. */
     .completion-checkbox {
       position: absolute;
-      left: 5px;
+      left: 0;
       top: 0;
-      transform: translateX(-120%);
+      transform: translateX(-1.5rem); /* shift left from the label */
+      margin-top: 5px;
     }
 
-    /* Legend or info at the bottom */
+    /* Info text at the bottom of the container. */
     .info {
-      margin-top: 20px;
+      margin-top: 1rem;
       font-size: 0.9em;
       color: #555;
     }
   </style>
 </head>
 <body>
-  <h1>Improved Gantt Chart</h1>
-  <p>
-    This page loads a JSON file from <code>chapters/chapter_X.json</code> based on
-    <strong>?chapter=X</strong> in the URL (e.g. <code>gantt_improved.html?chapter=1</code>).
-  </p>
-
-  <!-- The chart container will be dynamically sized by JavaScript -->
+  <!-- Main scrollable container -->
   <div id="chart-container">
-    <!-- Axis and bars will be injected here -->
-  </div>
-
-  <div class="info">
-    <ul>
-      <li>The green bar spans from <em>startDate</em> to <em>dueDate</em>.</li>
-      <li>The red line indicates "today" if it falls between the earliest start and latest due date.</li>
-      <li>Check the box to mark a chapter as completed (stored in Local Storage).</li>
-    </ul>
+    <div class="chart-header">
+      <h1>Improved Gantt Chart (Full-Page)</h1>
+      <p>
+        This page loads a JSON file (e.g., <code>chapters/chapter_1.json</code>) based on
+        <strong>?chapter=X</strong> in the URL (<code>?chapter=1</code>, <code>?chapter=2</code>, etc.).
+      </p>
+    </div>
   </div>
 
   <script>
     // === CONFIGURABLE PARAMETERS ===
-    const PIXELS_PER_DAY = 5;    // Adjust for bar length scaling
-    const ROW_HEIGHT = 30;       // Vertical spacing per row
-    const AXIS_HEIGHT = 30;      // Space at the top for the date axis
-    const LABEL_WIDTH = 120;     // Space to the left for labels
+    const PIXELS_PER_DAY = 5;   // Horizontal scale (px per day)
+    const AXIS_HEIGHT = 30;     // Height for the top date axis
+    const ROW_HEIGHT = 30;      // Height for each chapter row
+    const LABEL_WIDTH = 130;    // Space on the left for the label
     // ===============================
 
-    // 1. Determine which JSON file to load from URL ?chapter=X
+    // Get ?chapter=X from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const chapterParam = urlParams.get('chapter') || "1";
     const jsonPath = `chapters/chapter_${chapterParam}.json`;
 
-    // 2. Fetch the JSON data
+    // Container element
+    const container = document.getElementById('chart-container');
+
+    // Fetch the JSON data
     fetch(jsonPath)
       .then(res => {
         if (!res.ok) {
@@ -139,138 +155,172 @@
         return res.json();
       })
       .then(chapters => {
-        createImprovedGantt(chapters);
+        buildGantt(chapters);
       })
       .catch(err => {
         console.error(err);
-        document.getElementById("chart-container").textContent =
-          "Error loading data. Check console for details.";
+        container.textContent = "Error loading data. Check console for details.";
       });
 
-    // Helper: parse a "YYYY-MM-DD" string into a Date object
+    // Helper: parse "YYYY-MM-DD" into a Date
     function parseDate(dateStr) {
       if (!dateStr) return null;
       const parts = dateStr.split("-");
       if (parts.length !== 3) return null;
-      const year = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1;
-      const day = parseInt(parts[2], 10);
-      return new Date(year, month, day);
+      const [year, month, day] = parts.map(p => parseInt(p, 10));
+      return new Date(year, month - 1, day);
     }
 
-    function createImprovedGantt(chapters) {
-      // 1. Parse all dates and find the overall minStart and maxDue
-      const parsed = chapters.map(ch => {
-        return {
-          ...ch,
-          start: parseDate(ch.startDate),
-          due: parseDate(ch.dueDate)
-        };
-      }).filter(ch => ch.start && ch.due); // Only keep items with valid dates
+    function buildGantt(chapters) {
+      // Parse and filter valid date ranges
+      const data = chapters.map(ch => ({
+        ...ch,
+        start: parseDate(ch.startDate),
+        due: parseDate(ch.dueDate),
+        exam: parseDate(ch.oralExamDate)
+      }))
+      .filter(ch => ch.start && ch.due);
 
-      if (parsed.length === 0) {
-        document.getElementById("chart-container").textContent = "No valid date data found.";
+      if (data.length === 0) {
+        container.innerHTML += "<p>No valid startDate/dueDate found in JSON.</p>";
         return;
       }
 
-      const minStart = new Date(Math.min(...parsed.map(ch => ch.start)));
-      const maxDue = new Date(Math.max(...parsed.map(ch => ch.due)));
-      const totalDays = Math.round((maxDue - minStart) / (1000 * 60 * 60 * 24));
+      // Determine the overall minStart and maxDue
+      const minStart = new Date(Math.min(...data.map(ch => ch.start)));
+      const maxDue = new Date(Math.max(...data.map(ch => ch.due)));
+
+      // Calculate total chart width
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const totalDays = Math.round((maxDue - minStart) / msPerDay);
       const chartWidth = totalDays * PIXELS_PER_DAY;
-      const chartHeight = parsed.length * ROW_HEIGHT + AXIS_HEIGHT;
 
-      // 2. Size the chart container
-      const container = document.getElementById("chart-container");
-      container.style.width = (chartWidth + LABEL_WIDTH + 20) + "px";
-      container.style.height = chartHeight + "px";
+      // Chart height: axis + one row per item
+      const chartHeight = AXIS_HEIGHT + data.length * ROW_HEIGHT;
 
-      // 3. Create the date axis at the top
-      const axis = document.createElement('div');
-      axis.className = 'date-axis';
-      axis.style.width = chartWidth + 'px';
-      axis.style.left = LABEL_WIDTH + 'px'; // push right for label space
-      axis.style.height = AXIS_HEIGHT + 'px';
-      container.appendChild(axis);
+      // Make the container big enough to hold the entire chart
+      // (plus some padding on the right if desired)
+      container.style.width = "100%";  // fill the browser width
+      container.style.height = "100%"; // fill the browser height
+      // We'll place absolutely positioned elements inside.
 
-      // 3a. Add ticks for each week between minStart and maxDue
-      //     (For brevity, we do weekly increments, can refine as needed.)
-      const oneDay = 1000 * 60 * 60 * 24;
-      for (let d = new Date(minStart), i = 0; d <= maxDue; d.setDate(d.getDate() + 7), i++) {
-        const offsetDays = Math.round((d - minStart) / oneDay);
+      // 1) Create the date-axis
+      const axisDiv = document.createElement('div');
+      axisDiv.className = "date-axis";
+      axisDiv.style.width = chartWidth + "px";
+      axisDiv.style.left = LABEL_WIDTH + "px";
+      axisDiv.style.height = AXIS_HEIGHT + "px";
+      container.appendChild(axisDiv);
+
+      // Add weekly ticks for demonstration
+      for (let d = new Date(minStart); d <= maxDue; d.setDate(d.getDate() + 7)) {
+        const offsetDays = Math.round((d - minStart) / msPerDay);
         const xPos = offsetDays * PIXELS_PER_DAY;
-
+        
         // Tick line
         const tick = document.createElement('div');
-        tick.className = 'date-tick';
-        tick.style.left = xPos + 'px';
-        axis.appendChild(tick);
+        tick.className = "date-tick";
+        tick.style.left = xPos + "px";
+        axisDiv.appendChild(tick);
 
         // Label
         const label = document.createElement('div');
-        label.className = 'date-label';
-        label.style.left = xPos + 'px';
-        // Format date (YYYY-MM-DD)
-        const month = (d.getMonth() + 1).toString().padStart(2, "0");
-        const day = d.getDate().toString().padStart(2, "0");
-        label.textContent = `${d.getFullYear()}-${month}-${day}`;
-        axis.appendChild(label);
+        label.className = "date-label";
+        label.style.left = xPos + "px";
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        label.textContent = `${d.getFullYear()}-${mm}-${dd}`;
+        axisDiv.appendChild(label);
       }
 
-      // 4. Add a "today" line if within range
+      // 2) "Today" line if within range
       const today = new Date();
       if (today >= minStart && today <= maxDue) {
-        const todayOffsetDays = Math.round((today - minStart) / oneDay);
-        const todayX = todayOffsetDays * PIXELS_PER_DAY;
-
+        const offsetToday = Math.round((today - minStart) / msPerDay);
+        const todayX = offsetToday * PIXELS_PER_DAY + LABEL_WIDTH;
         const todayLine = document.createElement('div');
-        todayLine.className = 'today-line';
-        todayLine.style.left = (LABEL_WIDTH + todayX) + 'px';
-        todayLine.style.height = chartHeight + 'px';
+        todayLine.className = "today-line";
+        todayLine.style.left = todayX + "px";
+        todayLine.style.height = chartHeight + "px"; // span entire chart
         container.appendChild(todayLine);
       }
 
-      // 5. Create a row for each chapter
-      parsed.forEach((ch, idx) => {
-        const rowTop = AXIS_HEIGHT + idx * ROW_HEIGHT;
+      // 3) Build each row
+      data.forEach((ch, i) => {
+        const rowTop = AXIS_HEIGHT + i * ROW_HEIGHT;
 
+        // Create a container for the row
         const rowDiv = document.createElement('div');
-        rowDiv.className = 'gantt-row';
-        rowDiv.style.top = rowTop + 'px';
-        rowDiv.style.width = (chartWidth + LABEL_WIDTH) + 'px';
+        rowDiv.className = "gantt-row";
+        rowDiv.style.top = rowTop + "px";
+        rowDiv.style.width = (LABEL_WIDTH + chartWidth) + "px";
+        container.appendChild(rowDiv);
 
-        // Chapter label on the left
-        const label = document.createElement('span');
-        label.className = 'gantt-label';
-        label.textContent = `Chapter ${ch.chapter}`;
-        rowDiv.appendChild(label);
+        // The label (chapter #) on the left
+        const labelSpan = document.createElement('span');
+        labelSpan.className = "gantt-label";
+        labelSpan.textContent = `Chapter ${ch.chapter}`;
+        rowDiv.appendChild(labelSpan);
 
-        // Position the bar according to the offset from minStart
-        const offsetDays = Math.round((ch.start - minStart) / oneDay);
+        // The bar offset
+        const offsetDays = Math.round((ch.start - minStart) / msPerDay);
         const barLeft = offsetDays * PIXELS_PER_DAY + LABEL_WIDTH;
-        const durationDays = Math.round((ch.due - ch.start) / oneDay);
+
+        // The bar width
+        const durationDays = Math.round((ch.due - ch.start) / msPerDay);
         const barWidth = durationDays * PIXELS_PER_DAY;
 
-        // The bar element
-        const bar = document.createElement('div');
-        bar.className = 'gantt-bar';
-        bar.style.left = barLeft + 'px';
-        bar.style.width = barWidth + 'px';
-        bar.title = `Start: ${ch.startDate}, Due: ${ch.dueDate}`;
-        rowDiv.appendChild(bar);
+        // The bar itself
+        const barDiv = document.createElement('div');
+        barDiv.className = "gantt-bar";
+        barDiv.style.left = barLeft + "px";
+        barDiv.style.width = barWidth + "px";
+        barDiv.title = `Start: ${ch.startDate}, Due: ${ch.dueDate}`;
+        rowDiv.appendChild(barDiv);
 
-        // Local Storage completion checkbox
+        // 3a) Show oral exam date if relevant and within range
+        if (ch.oralExamRelevant === true && ch.exam) {
+          if (ch.exam >= minStart && ch.exam <= maxDue) {
+            const examOffset = Math.round((ch.exam - minStart) / msPerDay);
+            const examLeft = examOffset * PIXELS_PER_DAY + LABEL_WIDTH;
+            const examMarker = document.createElement('div');
+            examMarker.className = "exam-marker";
+            examMarker.style.left = examLeft + "px";
+            examMarker.title = `Oral Exam: ${ch.oralExamDate}`;
+            rowDiv.appendChild(examMarker);
+          }
+        }
+
+        // 4) Completion checkbox
         const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'completion-checkbox';
-        const storageKey = `improved-gantt-chapter${chapterParam}-row${idx}-completed`;
+        checkbox.type = "checkbox";
+        checkbox.className = "completion-checkbox";
+        const storageKey = `improved-gantt-chapter${chapterParam}-row${i}-completed`;
         checkbox.checked = localStorage.getItem(storageKey) === "true";
         checkbox.addEventListener('change', () => {
           localStorage.setItem(storageKey, checkbox.checked.toString());
         });
         rowDiv.appendChild(checkbox);
-
-        container.appendChild(rowDiv);
       });
+
+      // 5) Add info/legend at bottom
+      const infoDiv = document.createElement('div');
+      infoDiv.className = "info";
+      infoDiv.innerHTML = `
+        <ul>
+          <li>The green bar spans from <em>startDate</em> to <em>dueDate</em>.</li>
+          <li>The red line shows "today" if it falls between the earliest start and latest due date.</li>
+          <li>An orange diamond indicates the <em>oral exam date</em> (if relevant).</li>
+          <li>Check the box to mark a chapter as completed (stored in Local Storage).</li>
+        </ul>
+      `;
+      // Position it after the rows (so it doesn't overlap them)
+      infoDiv.style.position = "absolute";
+      infoDiv.style.top = (AXIS_HEIGHT + data.length * ROW_HEIGHT + 20) + "px";
+      infoDiv.style.left = "0";
+      infoDiv.style.width = (LABEL_WIDTH + chartWidth) + "px";
+
+      container.appendChild(infoDiv);
     }
   </script>
 </body>
