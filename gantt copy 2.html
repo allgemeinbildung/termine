@@ -20,7 +20,6 @@
       --pixels-per-day: 20;
       --mandatory-color: #3498db;
       --semi-mandatory-color: #e67e22;
-      --due-color: #e67e22;
     }
 
     * {
@@ -102,14 +101,6 @@
       margin-right: 8px;
       background-color: var(--semi-mandatory-color);
       border-radius: 2px;
-    }
-    
-    .legend-circle {
-      width: 12px;
-      height: 12px;
-      margin-right: 8px;
-      background-color: var(--due-color);
-      border-radius: 50%;
     }
 
     #chart-inner {
@@ -256,7 +247,7 @@
       position: absolute;
       width: 16px;
       height: 16px;
-      background-color: var(--due-color);
+      background-color: #e67e22;
       border-radius: 50%;
       right: -8px;
       top: calc(50% - 8px);
@@ -389,27 +380,6 @@
     .show {
       display: block;
     }
-    
-    /* Notes input styles */
-    .notes-input {
-      margin-top: 5px;
-      width: 100%;
-      padding: 4px 8px;
-      border: 1px solid var(--border-color);
-      border-radius: 3px;
-      font-size: 12px;
-      color: var(--text-color);
-    }
-    
-    .notes-input::placeholder {
-      color: #999;
-      font-style: italic;
-    }
-    
-    .notes-container {
-      margin-top: 5px;
-      width: 100%;
-    }
   </style>
 </head>
 <body>
@@ -424,10 +394,6 @@
         <div class="legend-item">
           <div class="legend-square"></div>
           <span>Schriftliche Prüfungen</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-circle"></div>
-          <span>Abgabetermin</span>
         </div>
         <div class="dropdown">
           <button class="dropdown-btn" onclick="toggleDropdown()">Übersicht Abgaben</button>
@@ -755,7 +721,7 @@
         
         // Format the tooltip content
         let tooltipContent = `<strong>Kapitel ${ch.chapter}</strong><br>`;
-        tooltipContent += `Start: ${ch.startDate} | Due: ${ch.dueDate}<br>`;
+        tooltipContent += `Beginn: ${ch.startDate} | Abgabe: ${ch.dueDate}<br>`;
         
         // Add Lehrmittel info
         tooltipContent += `Lehrmittel: ${ch.lehrmittel === true ? 
@@ -796,7 +762,7 @@
             examTooltip.style.left = examLeft + "px";
             examTooltip.style.top = "-25px";
             examTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
-            examTooltip.textContent = `Oral Exam: ${ch.oralExamDate}`;
+            examTooltip.textContent = `Mündliche Prüfung: ${ch.oralExamDate}`;
             timelineDiv.appendChild(examTooltip);
           }
         }
@@ -817,30 +783,9 @@
           writtenExamTooltip.style.left = writtenExamLeft + "px";
           writtenExamTooltip.style.top = "-25px";
           writtenExamTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
-          writtenExamTooltip.textContent = `Written Exam: ${ch.writtenExamDate}`;
+          writtenExamTooltip.textContent = `Schriftliche Prüfung: ${ch.writtenExamDate}`;
           timelineDiv.appendChild(writtenExamTooltip);
         }
-        
-        // Add notes input field
-        const notesContainer = document.createElement("div");
-        notesContainer.className = "notes-container";
-        
-        const notesInput = document.createElement("input");
-        notesInput.type = "text";
-        notesInput.className = "notes-input";
-        notesInput.placeholder = "Notizen werden lokal gespeichert";
-        
-        // Set up storage key for notes
-        const notesStorageKey = `gantt-chapter${chapterParam}-${ch.chapter}-notes`;
-        notesInput.value = localStorage.getItem(notesStorageKey) || "";
-        
-        // Save notes to localStorage on input
-        notesInput.addEventListener("input", () => {
-          localStorage.setItem(notesStorageKey, notesInput.value);
-        });
-        
-        notesContainer.appendChild(notesInput);
-        labelContainer.appendChild(notesContainer);
       });
       
       // 8. Populate the dropdown lists
