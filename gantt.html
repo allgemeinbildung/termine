@@ -328,6 +328,58 @@
     .due-symbol:hover + .tooltip {
       opacity: 1;
     }
+    
+    /* Dropdown styles */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      margin-left: 20px;
+    }
+    
+    .dropdown-btn {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 400px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 30;
+      padding: 16px;
+      border-radius: 4px;
+      margin-top: 5px;
+      line-height: 1.5;
+    }
+    
+    .dropdown-content h3 {
+      margin-top: 16px;
+      margin-bottom: 8px;
+      color: #2c3e50;
+    }
+    
+    .dropdown-content h4 {
+      margin-top: 12px;
+      margin-bottom: 6px;
+      color: #2c3e50;
+      font-style: italic;
+    }
+    
+    .dropdown-content ul {
+      margin-top: 8px;
+      padding-left: 20px;
+    }
+    
+    .show {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -343,13 +395,20 @@
           <div class="legend-square"></div>
           <span>Schriftliche Prüfungen</span>
         </div>
-        <div class="legend-item">
-          <div class="legend-mandatory"></div>
-          <span>Pflicht</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-semi-mandatory"></div>
-          <span>Wahlpflicht</span>
+        <div class="dropdown">
+          <button class="dropdown-btn" onclick="toggleDropdown()">Übersicht Abgaben</button>
+          <div id="abgabenDropdown" class="dropdown-content">
+            <p>Folgende Aufträge müssen abgegeben werden:</p>
+            <h3>Pflichtmodule:</h3>
+            <ul id="pflichtmodule-list">
+              <!-- Will be populated by JavaScript -->
+            </ul>
+            <h3>Wahlmodule:</h3>
+            <h4>❗ Eine Abgabe per Modul</h4>
+            <ul id="wahlmodule-list">
+              <!-- Will be populated by JavaScript -->
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -365,6 +424,24 @@
     
     // Update chapter title
     document.getElementById("chapter-title").textContent = `${chapterParam}`;
+
+    // Dropdown toggle function
+    function toggleDropdown() {
+      document.getElementById("abgabenDropdown").classList.toggle("show");
+    }
+
+    // Close the dropdown if clicked outside
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropdown-btn')) {
+        const dropdowns = document.getElementsByClassName("dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+          const openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
 
     // Get CSS variables
     const getVarValue = (name) => {
@@ -640,6 +717,7 @@
         barTooltip.className = "tooltip enhanced-tooltip";
         barTooltip.style.left = (barLeft + barWidth/2) + "px";
         barTooltip.style.top = "-80px";
+        barTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
         
         // Format the tooltip content
         let tooltipContent = `<strong>Kapitel ${ch.chapter}</strong><br>`;
@@ -663,6 +741,7 @@
         dueTooltip.className = "tooltip";
         dueTooltip.style.left = (barLeft + barWidth) + "px";
         dueTooltip.style.top = "-25px";
+        dueTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
         dueTooltip.textContent = `Due: ${ch.dueDate}`;
         timelineDiv.appendChild(dueTooltip);
 
@@ -682,6 +761,7 @@
             examTooltip.className = "tooltip";
             examTooltip.style.left = examLeft + "px";
             examTooltip.style.top = "-25px";
+            examTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
             examTooltip.textContent = `Oral Exam: ${ch.oralExamDate}`;
             timelineDiv.appendChild(examTooltip);
           }
@@ -702,10 +782,102 @@
           writtenExamTooltip.className = "tooltip";
           writtenExamTooltip.style.left = writtenExamLeft + "px";
           writtenExamTooltip.style.top = "-25px";
+          writtenExamTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
           writtenExamTooltip.textContent = `Written Exam: ${ch.writtenExamDate}`;
           timelineDiv.appendChild(writtenExamTooltip);
         }
       });
+      
+      // 8. Populate the dropdown lists
+      populateModuleLists(data, wahlmodulGroups);
+    }
+    
+    // Function to populate the module lists in the dropdown
+    function populateModuleLists(data, wahlmodulGroups) {
+      const pflichtmoduleList = document.getElementById('pflichtmodule-list');
+      const wahlmoduleList = document.getElementById('wahlmodule-list');
+      
+      // Clear existing lists
+      pflichtmoduleList.innerHTML = '';
+      wahlmoduleList.innerHTML = '';
+      
+      // Track which modules we've already added
+      const addedPflicht = {
+        lehrmittel: new Set(),
+        vertiefung: new Set()
+      };
+      
+      const addedWahl = {
+        lehrmittel: {},
+        vertiefung: {}
+      };
+      
+      // First add all Pflichtmodule
+      data.forEach(ch => {
+        // Lehrmittel Pflichtmodul
+        if (ch.lehrmittel === true && !addedPflicht.lehrmittel.has(ch.chapter)) {
+          const li = document.createElement('li');
+          li.textContent = `Lehrmittel Kapitel ${ch.chapter}`;
+          pflichtmoduleList.appendChild(li);
+          addedPflicht.lehrmittel.add(ch.chapter);
+        }
+        
+        // Vertiefung Pflichtmodul
+        if (ch.vertiefung === true && !addedPflicht.vertiefung.has(ch.chapter)) {
+          const li = document.createElement('li');
+          li.textContent = `Vertiefung Kapitel ${ch.chapter}`;
+          pflichtmoduleList.appendChild(li);
+          addedPflicht.vertiefung.add(ch.chapter);
+        }
+      });
+      
+      // Then add all Wahlmodule groups
+      for (const type in wahlmodulGroups) {
+        for (const valueStr in wahlmodulGroups[type]) {
+          const letter = wahlmodulGroups[type][valueStr];
+          
+          // Find all chapters that belong to this group
+          const chaptersInGroup = data.filter(ch => {
+            if (type === 'lehrmittel' && ch.lehrmittel !== true) {
+              const chValueStr = Array.isArray(ch.lehrmittel) ? 
+                ch.lehrmittel.sort().join(',') : String(ch.lehrmittel);
+              return chValueStr === valueStr;
+            }
+            if (type === 'vertiefung' && ch.vertiefung !== true) {
+              const chValueStr = Array.isArray(ch.vertiefung) ? 
+                ch.vertiefung.sort().join(',') : String(ch.vertiefung);
+              return chValueStr === valueStr;
+            }
+            return false;
+          });
+          
+          if (chaptersInGroup.length > 0) {
+            const chapterNumbers = chaptersInGroup.map(ch => ch.chapter).sort((a, b) => a - b);
+            const li = document.createElement('li');
+            
+            // Format as ranges if possible (e.g., "3-5" instead of "3, 4, 5")
+            const ranges = [];
+            let range = [chapterNumbers[0]];
+            
+            for (let i = 1; i < chapterNumbers.length; i++) {
+              if (chapterNumbers[i] === chapterNumbers[i-1] + 1) {
+                range.push(chapterNumbers[i]);
+              } else {
+                ranges.push(range);
+                range = [chapterNumbers[i]];
+              }
+            }
+            ranges.push(range);
+            
+            const formattedRanges = ranges.map(r => 
+              r.length > 1 ? `${r[0]}-${r[r.length-1]}` : r[0]
+            ).join(', ');
+            
+            li.textContent = `Wahlmodul ${letter}: ${type === 'lehrmittel' ? 'Lehrmittel' : 'Vertiefung'} Kapitel ${formattedRanges}`;
+            wahlmoduleList.appendChild(li);
+          }
+        }
+      }
     }
 
     // Load data from JSON
