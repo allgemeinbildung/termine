@@ -891,7 +891,8 @@
         // Lehrmittel Pflichtmodul
         if (ch.lehrmittel === true && !addedPflicht.lehrmittel.has(ch.chapter)) {
           const li = document.createElement('li');
-          li.innerHTML = `Lehrmittel ${ch.chapter} <span style="color: var(--due-color); margin-left: 5px;">●</span> ${ch.dueDate}`;
+            li.innerHTML = `Lehrmittel ${ch.chapter}<br>
+            <span style="color: var(--due-color); margin-left: 5px;">●</span> ${ch.dueDate}`;
           pflichtmoduleList.appendChild(li);
           addedPflicht.lehrmittel.add(ch.chapter);
         }
