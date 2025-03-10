@@ -38,8 +38,9 @@
     }
 
     #chart-container {
+      margin-top: 100px;
       width: 100%;
-      height: 100%;
+      height: calc(100% - 100px);
       overflow: auto;
       position: relative;
       background: white;
@@ -50,16 +51,11 @@
       top: 0;
       left: 0;
       width: 100%;
+      height: 100px; /* Fixed height for header */
       background: white;
       z-index: 20;
       padding: 1.5rem;
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-
-    #chart-container {
-      margin-top: calc(1.5rem * 2 + [header content height in px]);
-      /* Ensure the container’s top margin is at least equal to the header’s height */
-      overflow: auto;
     }
 
     .chart-header h1 {
@@ -418,10 +414,9 @@
   </style>
 </head>
 <body>
-  <div id="chart-container">
-    <div class="chart-header">
-      <h1>Ablaufplan <span id="chapter-title"></span></h1>
-      <div class="legend">
+  <div class="chart-header">
+    <h1>Ablaufplan <span id="chapter-title"></span></h1>
+    <div class="legend">
         <div class="legend-item">
           <div class="legend-diamond"></div>
           <span>Mündliche Prüfungen</span>
@@ -449,11 +444,10 @@
             </ul>
           </div>
         </div>
-      </div>
     </div>
     <div id="chart-container">
       <div id="chart-inner"></div>
-  </div>
+    </div>
 
   <script>
     // Get URL parameter for chapter
