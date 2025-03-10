@@ -795,7 +795,7 @@
         
         // Format the tooltip content
         let tooltipContent = `<strong>${ch.chapter}</strong><br>`;
-        tooltipContent += `Start: ${ch.startDate} | Due: ${ch.dueDate}<br>`;
+        tooltipContent += `Start: ${ch.startDate} | Abgabe: ${ch.dueDate}<br>`;
         
         // Add Lehrmittel info
         tooltipContent += `Lehrmittel: ${ch.lehrmittel === true ? 
@@ -816,7 +816,7 @@
         dueTooltip.style.left = (barLeft + barWidth) + "px";
         dueTooltip.style.top = "-25px";
         dueTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
-        dueTooltip.textContent = `Due: ${ch.dueDate}`;
+        dueTooltip.textContent = `Abgabe: ${ch.dueDate}`;
         timelineDiv.appendChild(dueTooltip);
 
         // Oral exam diamond if relevant
