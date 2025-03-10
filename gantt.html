@@ -900,7 +900,8 @@
         // Vertiefung Pflichtmodul
         if (ch.vertiefung === true && !addedPflicht.vertiefung.has(ch.chapter)) {
           const li = document.createElement('li');
-          li.innerHTML = `Vertiefung ${ch.chapter} <span style="color: var(--due-color); margin-left: 5px;">●</span> ${ch.dueDate}`;
+          li.innerHTML = `Vertiefung ${ch.chapter}<br>
+          <span style="color: var(--due-color); margin-left: 5px;">●</span> ${ch.dueDate}`;
           pflichtmoduleList.appendChild(li);
           addedPflicht.vertiefung.add(ch.chapter);
         }
@@ -956,7 +957,8 @@
             const earliestDueDate = dueDates.length > 0 ? dueDates[0] : '';
             
             const li = document.createElement('li');
-            li.innerHTML = `Wahlmodul ${letter}: ${type === 'lehrmittel' ? 'Lehrmittel' : 'Vertiefung'} ${formattedRanges} <span style="color: var(--due-color); margin-left: 5px;">●</span> ${earliestDueDate}`;
+            li.innerHTML = `Wahlmodul ${letter}: ${type === 'lehrmittel' ? 'Lehrmittel' : 'Vertiefung'} ${formattedRanges}<br>
+            <span style="color: var(--due-color); margin-left: 5px;">●</span> ${earliestDueDate}`;
             wahlmoduleList.appendChild(li);
           }
         }
