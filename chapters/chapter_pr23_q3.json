@@ -1,0 +1,128 @@
+[
+    {
+      "chapter": "6.1 Die wichtigsten Aufgabe eines Staates",
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-02-18",
+      "dueDate": "2025-03-18",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-11",
+      "writtenExamDate": "2025-03-18"
+    },
+    {
+      "chapter": "6.2 Bundesstaat Schweiz",
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-03-04",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": "2025-03-18"
+    },
+    {
+      "chapter": "6.3 Gewaltenteilung",
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-03-11",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": "2025-04-01"
+    },
+    {
+      "chapter": "6.4 Referendum und Initiative",
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": "2025-03-18",
+      "dueDate": "2025-04-01",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": "2025-04-01"
+    },
+    {
+      "chapter": "6.5 Entstehung eines Gesetzes",
+      "lehrmittel": false,
+      "vertiefung": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": null,
+      "dueDate": null,
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
+    },
+    {
+      "chapter": "6.6 Interessengruppen",
+      "lehrmittel": false,
+      "vertiefung": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": null,
+      "dueDate": null,
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
+    },
+    {
+      "chapter": "6.7 Übersicht Kanton Zürich",
+      "lehrmittel": false,
+      "vertiefung": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "startDate": null,
+      "dueDate": null,
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
+    }
+]
