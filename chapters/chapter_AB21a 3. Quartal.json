@@ -1,0 +1,54 @@
+[
+    {
+      "chapter": "13.1 Sozialversicherunge",
+      "lehrmittel": true,
+      "vertiefung": true,
+      "startDate": "2025-02-18",
+      "dueDate": "2025-03-25",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-04",
+      "writtenExamDate": "2025-03-25"
+    },
+    {
+      "chapter": "15.1 Arbeitsrecht",
+      "lehrmittel": true,
+      "vertiefung": [
+        "2",
+        "3",
+        "4"
+      ],
+      "startDate": "2025-04-01",
+      "dueDate": "2025-05-06",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-04-15",
+      "writtenExamDate": "2025-05-06"
+    },
+    {
+      "chapter": "15.2 Qualifizierungen am Arbeitsmarkt",
+      "lehrmittel": true,
+      "vertiefung": [
+        "2",
+        "3",
+        "4"
+      ],
+      "startDate": "2025-04-08",
+      "dueDate": "2025-05-06",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": "2025-05-06"
+    },
+    {
+      "chapter": "15.3 Arbeitslosigkeit",
+      "lehrmittel": true,
+      "vertiefung": [
+        "2",
+        "3",
+        "4"
+      ],
+      "startDate": "2025-04-15",
+      "dueDate": "2025-05-06",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": "2025-05-06"
+    }
+]
