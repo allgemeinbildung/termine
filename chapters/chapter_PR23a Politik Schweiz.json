@@ -12,10 +12,10 @@
         "7"
       ],
       "startDate": "2025-02-18",
-      "dueDate": "2025-03-18",
+      "dueDate": "2025-04-01",
       "oralExamRelevant": true,
       "oralExamDate": "2025-03-11",
-      "writtenExamDate": "2025-03-18"
+      "writtenExamDate": "2025-04-01"
     },
     {
       "chapter": "6.2 Bundesstaat Schweiz",
@@ -33,7 +33,7 @@
       "dueDate": "2025-04-01",
       "oralExamRelevant": null,
       "oralExamDate": null,
-      "writtenExamDate": "2025-03-18"
+      "writtenExamDate": "2025-04-01"
     },
     {
       "chapter": "6.3 Gewaltenteilung",
@@ -73,7 +73,7 @@
     },
     {
       "chapter": "6.5 Entstehung eines Gesetzes",
-      "lehrmittel": false,
+      "lehrmittel": null,
       "vertiefung": [
         "1",
         "2",
@@ -91,7 +91,7 @@
     },
     {
       "chapter": "6.6 Interessengruppen",
-      "lehrmittel": false,
+      "lehrmittel": null,
       "vertiefung": [
         "1",
         "2",
@@ -109,7 +109,7 @@
     },
     {
       "chapter": "6.7 Übersicht Kanton Zürich",
-      "lehrmittel": false,
+      "lehrmittel": null,
       "vertiefung": [
         "1",
         "2",
