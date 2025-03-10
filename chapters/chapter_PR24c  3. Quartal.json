@@ -1,0 +1,84 @@
+[
+    {
+      "chapter": "2.1 Lohnbestandteile",
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2"
+      ],
+      "startDate": "2025-02-19",
+      "dueDate": "2025-03-19",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-05",
+      "writtenExamDate": "2025-03-19"
+    },
+    {
+      "chapter": "2.2 Budget",
+      "lehrmittel": true,
+      "vertiefung": [
+        "1",
+        "2"
+      ],
+      "startDate": "2025-02-26",
+      "dueDate": "2025-03-19",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": "2025-03-19"
+    },
+    {
+      "chapter": "2.3 Zahlungsarten",
+      "lehrmittel": true,
+      "vertiefung": [
+        "3",
+        "4"
+      ],
+      "startDate": "2025-03-19",
+      "dueDate": "2025-04-02",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
+    },
+    {
+      "chapter": "2.4 Kaufvertragsarten Teil 1",
+      "lehrmittel": true,
+      "vertiefung": [
+        "3",
+        "4"
+      ],
+      "startDate": "2025-03-19",
+      "dueDate": "2025-04-02",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-04-02",
+      "writtenExamDate": null
+    },
+    {
+      "chapter": "2.5 Vertragsarten",
+      "lehrmittel": null,
+      "vertiefung": null,
+      "startDate": null,
+      "dueDate": null,
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
+    },
+    {
+      "chapter": "2.6 Geldanlagemöglichkeiten",
+      "lehrmittel": null,
+      "vertiefung": null,
+      "startDate": null,
+      "dueDate": null,
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null
+    },
+    {
+      "chapter": "2.7 Preisbildung",
+      "lehrmittel": true,
+      "vertiefung": true,
+      "startDate": "2025-04-02",
+      "dueDate": "2025-04-16",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": "2025-04-16"
+    }
+]
