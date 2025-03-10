@@ -723,7 +723,7 @@
         // Chapter Name (Label)
         const labelSpan = document.createElement("div");
         labelSpan.className = "gantt-label";
-        labelSpan.textContent = `Kapitel ${ch.chapter}`;
+        labelSpan.textContent = `${ch.chapter}`;
         topContainer.appendChild(labelSpan);
 
         // Add the notes input field below the top container
@@ -778,7 +778,7 @@
         barTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
         
         // Format the tooltip content
-        let tooltipContent = `<strong>Kapitel ${ch.chapter}</strong><br>`;
+        let tooltipContent = `<strong>${ch.chapter}</strong><br>`;
         tooltipContent += `Start: ${ch.startDate} | Due: ${ch.dueDate}<br>`;
         
         // Add Lehrmittel info
@@ -875,7 +875,7 @@
         // Lehrmittel Pflichtmodul
         if (ch.lehrmittel === true && !addedPflicht.lehrmittel.has(ch.chapter)) {
           const li = document.createElement('li');
-          li.textContent = `Lehrmittel Kapitel ${ch.chapter}`;
+          li.textContent = `Lehrmittel ${ch.chapter}`;
           pflichtmoduleList.appendChild(li);
           addedPflicht.lehrmittel.add(ch.chapter);
         }
@@ -883,7 +883,7 @@
         // Vertiefung Pflichtmodul
         if (ch.vertiefung === true && !addedPflicht.vertiefung.has(ch.chapter)) {
           const li = document.createElement('li');
-          li.textContent = `Vertiefung Kapitel ${ch.chapter}`;
+          li.textContent = `Vertiefung ${ch.chapter}`;
           pflichtmoduleList.appendChild(li);
           addedPflicht.vertiefung.add(ch.chapter);
         }
@@ -931,7 +931,7 @@
               r.length > 1 ? `${r[0]}-${r[r.length-1]}` : r[0]
             ).join(', ');
             
-            li.textContent = `Wahlmodul ${letter}: ${type === 'lehrmittel' ? 'Lehrmittel' : 'Vertiefung'} Kapitel ${formattedRanges}`;
+            li.textContent = `Wahlmodul ${letter}: ${type === 'lehrmittel' ? 'Lehrmittel' : 'Vertiefung'} ${formattedRanges}`;
             wahlmoduleList.appendChild(li);
           }
         }
