@@ -4,419 +4,424 @@
   <meta charset="UTF-8" />
   <title>Ablaufplan</title>
   <style>
-    :root {
-      --primary-color: #3498db;
-      --secondary-color: #2ecc71;
-      --highlight-color: #f39c12;
-      --written-exam-color: #9b59b6; /* New color for written exams */
-      --today-color: #e74c3c;
-      --border-color: #ddd;
-      --text-color: #333;
-      --bg-color: #f9f9f9;
-      --hover-color: #f5f5f5;
-      --row-height: 40px;
-      --axis-height: 50px;
-      --label-width: 220px; /* Increased to accommodate mandatory indicators */
-      --pixels-per-day: 10;
-      --mandatory-color: #3498db;
-      --semi-mandatory-color: #e67e22;
-      --due-color: #e67e22;
-    }
+  :root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --highlight-color: #f39c12;
+    --written-exam-color: #9b59b6;
+    --today-color: #e74c3c;
+    --border-color: #ddd;
+    --text-color: #333;
+    --bg-color: #f9f9f9;
+    --hover-color: #f5f5f5;
+    --row-height: 40px;
+    --axis-height: 50px;
+    --label-width: 220px;
+    --pixels-per-day: 20;
+    --mandatory-color: #3498db;
+    --semi-mandatory-color: #e67e22;
+    --due-color: #e67e22;
+    --header-height: 120px; /* Adjust based on your header content */
+  }
 
-    * {
-      box-sizing: border-box;
-    }
+  * {
+    box-sizing: border-box;
+  }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      color: var(--text-color);
-      overflow: hidden;
-    }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text-color);
+    overflow: hidden;
+  }
 
-    #chart-container {
-      margin-top: 100px;
-      width: 100%;
-      height: calc(100% - 100px);
-      overflow: auto;
-      position: relative;
-      background: white;
-    }
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+  }
 
-    .chart-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100px; /* Fixed height for header */
-      background: white;
-      z-index: 20;
-      padding: 1.5rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
+  .chart-header {
+    padding: 1.5rem;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    flex: 0 0 auto;
+  }
 
-    .chart-header h1 {
-      margin: 0 0 0.5rem 0;
-      color: #2c3e50;
-    }
+  .chart-header h1 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+  }
 
-    .legend {
-      margin-top: 0.5rem;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+  .legend {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      margin-right: 20px;
-      margin-bottom: 5px;
-    }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    margin-bottom: 5px;
+  }
 
-    .legend-diamond {
-      width: 12px;
-      height: 12px;
-      margin-right: 8px;
-      background-color: var(--highlight-color);
-      transform: rotate(45deg);
-    }
+  .legend-diamond {
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    background-color: var(--highlight-color);
+    transform: rotate(45deg);
+  }
 
-    .legend-square {
-      width: 12px;
-      height: 12px;
-      margin-right: 8px;
-      background-color: var(--written-exam-color);
-    }
-    
-    .legend-mandatory {
-      width: 12px;
-      height: 12px;
-      margin-right: 8px;
-      background-color: var(--mandatory-color);
-      border-radius: 2px;
-    }
-    
-    .legend-semi-mandatory {
-      width: 12px;
-      height: 12px;
-      margin-right: 8px;
-      background-color: var(--semi-mandatory-color);
-      border-radius: 2px;
-    }
-    
-    .legend-circle {
-      width: 12px;
-      height: 12px;
-      margin-right: 8px;
-      background-color: var(--due-color);
-      border-radius: 50%;
-    }
+  .legend-square {
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    background-color: var(--written-exam-color);
+  }
 
-    #chart-inner {
-      position: relative;
-      margin-left: 20px;
-    }
+  .legend-mandatory {
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    background-color: var(--mandatory-color);
+    border-radius: 2px;
+  }
 
-    .date-axis {
-      position: sticky;
-      top: var(--axis-height);
-      left: 0;
-      height: var(--axis-height);
-      background: white;
-      border-bottom: 1px solid var(--border-color);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-    }
+  .legend-semi-mandatory {
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    background-color: var(--semi-mandatory-color);
+    border-radius: 2px;
+  }
 
-    .month-row, .day-row {
-      height: calc(var(--axis-height) / 2);
-      position: relative;
-    }
+  .legend-circle {
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    background-color: var(--due-color);
+    border-radius: 50%;
+  }
 
-    .month-tick {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      border-left: 1px solid var(--border-color);
-    }
+  #chart-container {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    background: white;
+  }
 
-    .month-label {
-      position: absolute;
-      top: 5px;
-      transform: translateX(-50%);
-      font-weight: bold;
-      color: #2c3e50;
-    }
+  #chart-inner {
+    position: relative;
+    margin-left: 20px;
+  }
 
-    .day-tick {
-      position: absolute;
-      bottom: 0;
-      width: 1px;
-      height: 5px;
-      background: #999;
-    }
+  .date-axis {
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: var(--axis-height);
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+  }
 
-    .week-tick {
-      position: absolute;
-      bottom: 0;
-      width: 1px;
-      height: 10px;
-      background: #666;
-    }
+  .month-row, .day-row {
+    height: calc(var(--axis-height) / 2);
+    position: relative;
+  }
 
-    .day-label {
-      position: absolute;
-      bottom: 15px;
-      transform: translateX(-50%);
-      font-size: 0.75em;
-      color: #666;
-    }
+  .month-tick {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-left: 1px solid var(--border-color);
+  }
 
-    .today-line {
-      position: absolute;
-      top: 0;
-      width: 2px;
-      background: var(--today-color);
-      z-index: 5;
-      height: 100%;
-    }
+  .month-label {
+    position: absolute;
+    top: 5px;
+    transform: translateX(-50%);
+    font-weight: bold;
+    color: #2c3e50;
+  }
 
-    .today-label {
-      position: absolute;
-      background: var(--today-color);
-      color: white;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-size: 0.7em;
-      transform: translateX(-50%);
-      white-space: nowrap;
-    }
+  .day-tick {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    height: 5px;
+    background: #999;
+  }
 
-    .gantt-row {
-      position: relative;
-      left: 0;
-      height: var(--row-height);
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-    }
+  .week-tick {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    height: 10px;
+    background: #666;
+  }
 
-    .gantt-row:hover {
-      background-color: var(--hover-color);
-    }
+  .day-label {
+    position: absolute;
+    bottom: 15px;
+    transform: translateX(-50%);
+    font-size: 0.75em;
+    color: #666;
+  }
 
-    .gantt-label-container {
-      position: sticky;
-      left: 0;
-      width: var(--label-width);
-      background: white;
-      border-right: 1px solid var(--border-color);
-      z-index: 3;
-      padding: 5px 10px;
-    }
+  .today-line {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    background: var(--today-color);
+    z-index: 5;
+    height: 100%;
+  }
 
-    .gantt-label {
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      flex-grow: 1;
-    }
+  .today-label {
+    position: absolute;
+    background: var(--today-color);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.7em;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
 
-    .gantt-timeline {
-      position: relative;
-      flex-grow: 1;
-      height: 100%;
-      z-index: 1;
-    }
+  .gantt-row {
+    position: relative;
+    left: 0;
+    height: var(--row-height);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+  }
 
-    .gantt-bar {
-      position: absolute;
-      top: 8px;
-      height: calc(var(--row-height) - 16px);
-      background-color: var(--secondary-color);
-      border-radius: 4px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      z-index: 1;
-      transition: all 0.2s ease;
-    }
+  .gantt-row:hover {
+    background-color: var(--hover-color);
+  }
 
-    .gantt-bar:hover {
-      filter: brightness(0.95);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-      height: calc(var(--row-height) - 12px);
-      top: 6px;
-    }
+  .gantt-label-container {
+    position: sticky;
+    left: 0;
+    width: var(--label-width);
+    background: white;
+    border-right: 1px solid var(--border-color);
+    z-index: 3;
+    padding: 5px 10px;
+  }
 
-    .due-symbol {
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      background-color: var(--due-color);
-      border-radius: 50%;
-      right: -8px;
-      top: calc(50% - 8px);
-      border: 2px solid white;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-      z-index: 2;
-    }
+  .gantt-label {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+  }
 
-    .exam-marker {
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      background-color: var(--highlight-color);
-      transform: rotate(45deg);
-      top: calc((var(--row-height) - 16px) / 2);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 4;
-      transition: all 0.2s ease;
-    }
+  .gantt-timeline {
+    position: relative;
+    flex-grow: 1;
+    height: 100%;
+    z-index: 1;
+  }
 
-    .exam-marker:hover {
-      transform: rotate(45deg) scale(1.2);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-    }
+  .gantt-bar {
+    position: absolute;
+    top: 8px;
+    height: calc(var(--row-height) - 16px);
+    background-color: var(--secondary-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1;
+    transition: all 0.2s ease;
+  }
 
-    .written-exam-marker {
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      background-color: var(--written-exam-color);
-      top: calc((var(--row-height) - 16px) / 2);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 4;
-      transition: all 0.2s ease;
-    }
+  .gantt-bar:hover {
+    filter: brightness(0.95);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    height: calc(var(--row-height) - 12px);
+    top: 6px;
+  }
 
-    .written-exam-marker:hover {
-      transform: scale(1.2);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-    }
+  .due-symbol {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: var(--due-color);
+    border-radius: 50%;
+    right: -8px;
+    top: calc(50% - 8px);
+    border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    z-index: 2;
+  }
 
-    .completion-wrapper {
-      width: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  .exam-marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: var(--highlight-color);
+    transform: rotate(45deg);
+    top: calc((var(--row-height) - 16px) / 2);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 4;
+    transition: all 0.2s ease;
+  }
 
-    .completion-checkbox {
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-    }
+  .exam-marker:hover {
+    transform: rotate(45deg) scale(1.2);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  }
 
-    .tooltip {
-      position: absolute;
-      background: rgba(0,0,0,0.8);
-      color: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      pointer-events: none;
-      z-index: 100;
-      opacity: 0;
-      transition: opacity 0.2s;
-      white-space: nowrap;
-    }
+  .written-exam-marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: var(--written-exam-color);
+    top: calc((var(--row-height) - 16px) / 2);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 4;
+    transition: all 0.2s ease;
+  }
 
-    .enhanced-tooltip {
-      white-space: normal;
-      min-width: 200px;
-      line-height: 1.5;
-    }
+  .written-exam-marker:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  }
 
-    .gantt-bar:hover + .tooltip,
-    .exam-marker:hover + .tooltip,
-    .written-exam-marker:hover + .tooltip,
-    .due-symbol:hover + .tooltip {
-      opacity: 1;
-    }
-    
-    /* Dropdown styles */
-    .dropdown {
-      position: relative;
-      display: inline-block;
-      margin-left: 20px;
-    }
-    
-    .dropdown-btn {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-    
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: white;
-      min-width: 400px;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-      z-index: 30;
-      padding: 16px;
-      border-radius: 4px;
-      margin-top: 5px;
-      line-height: 1.5;
-    }
-    
-    .dropdown-content h3 {
-      margin-top: 16px;
-      margin-bottom: 8px;
-      color: #2c3e50;
-    }
-    
-    .dropdown-content h4 {
-      margin-top: 12px;
-      margin-bottom: 6px;
-      color: #2c3e50;
-      font-style: italic;
-    }
-    
-    .dropdown-content ul {
-      margin-top: 8px;
-      padding-left: 20px;
-    }
-    
-    .show {
-      display: block;
-    }
-    
-    /* Notes input styles */
-    .notes-input {
-      margin-top: 5px;
-      width: 100%;
-      padding: 4px 8px;
-      border: 1px solid var(--border-color);
-      border-radius: 3px;
-      font-size: 12px;
-      color: var(--text-color);
-    }
-    
-    .notes-input::placeholder {
-      color: #999;
-      font-style: italic;
-    }
-    
-    .notes-container {
-      margin-top: 5px;
-      width: 100%;
-    }
+  .completion-wrapper {
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .completion-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  .tooltip {
+    position: absolute;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+
+  .enhanced-tooltip {
+    white-space: normal;
+    min-width: 200px;
+    line-height: 1.5;
+  }
+
+  .gantt-bar:hover + .tooltip,
+  .exam-marker:hover + .tooltip,
+  .written-exam-marker:hover + .tooltip,
+  .due-symbol:hover + .tooltip {
+    opacity: 1;
+  }
+
+  /* Dropdown styles */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+  }
+
+  .dropdown-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 400px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 30;
+    padding: 16px;
+    border-radius: 4px;
+    margin-top: 5px;
+    line-height: 1.5;
+  }
+
+  .dropdown-content h3 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    color: #2c3e50;
+  }
+
+  .dropdown-content h4 {
+    margin-top: 12px;
+    margin-bottom: 6px;
+    color: #2c3e50;
+    font-style: italic;
+  }
+
+  .dropdown-content ul {
+    margin-top: 8px;
+    padding-left: 20px;
+  }
+
+  .show {
+    display: block;
+  }
+
+  /* Notes input styles */
+  .notes-input {
+    margin-top: 5px;
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--text-color);
+  }
+
+  .notes-input::placeholder {
+    color: #999;
+    font-style: italic;
+  }
+
+  .notes-container {
+    margin-top: 5px;
+    width: 100%;
+  }
   </style>
 </head>
 <body>
-  <div class="chart-header">
-    <h3>Ablaufplan <span id="chapter-title"></span></h3>
-    <div class="legend">
+  <div class="app-container">
+    <div class="chart-header">
+      <h1>Ablaufplan <span id="chapter-title"></span></h1>
+      <div class="legend">
         <div class="legend-item">
           <div class="legend-diamond"></div>
           <span>Mündliche Prüfungen</span>
@@ -446,9 +451,11 @@
         </div>
       </div>
     </div>
+    
     <div id="chart-container">
       <div id="chart-inner"></div>
     </div>
+  </div>
 
   <script>
     // Get URL parameter for chapter
@@ -682,9 +689,6 @@
         todayLabel.style.top = AXIS_HEIGHT + "px";
         todayLabel.textContent = "HEUTE";
         chartInner.appendChild(todayLabel);
-        
-        // Automatically scroll so that "HEUTE" is aligned with the left margin.
-        document.getElementById("chart-container").scrollLeft = todayX - LABEL_WIDTH;
       }
 
       // 7. Create chapter rows
