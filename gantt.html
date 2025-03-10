@@ -17,7 +17,7 @@
       --row-height: 40px;
       --axis-height: 50px;
       --label-width: 220px; /* Increased to accommodate mandatory indicators */
-      --pixels-per-day: 20;
+      --pixels-per-day: 10;
       --mandatory-color: #3498db;
       --semi-mandatory-color: #e67e22;
       --due-color: #e67e22;
@@ -679,6 +679,9 @@
         todayLabel.style.top = AXIS_HEIGHT + "px";
         todayLabel.textContent = "HEUTE";
         chartInner.appendChild(todayLabel);
+        
+        // Automatically scroll so that "HEUTE" is aligned with the left margin.
+        document.getElementById("chart-container").scrollLeft = todayX - LABEL_WIDTH;
       }
 
       // 7. Create chapter rows

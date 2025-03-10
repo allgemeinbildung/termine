@@ -210,13 +210,10 @@
       position: sticky;
       left: 0;
       width: var(--label-width);
-      height: 100%;
       background: white;
       border-right: 1px solid var(--border-color);
       z-index: 3;
-      display: flex;
-      align-items: center;
-      padding-left: 10px;
+      padding: 5px 10px;
     }
 
     .gantt-label {
@@ -700,11 +697,17 @@
         const labelContainer = document.createElement("div");
         labelContainer.className = "gantt-label-container";
         rowDiv.appendChild(labelContainer);
-        
+
+        // Create a top container for checkbox and chapter name
+        const topContainer = document.createElement("div");
+        topContainer.style.display = "flex";
+        topContainer.style.alignItems = "center";
+        labelContainer.appendChild(topContainer);
+
         // Checkbox
         const checkboxWrapper = document.createElement("div");
         checkboxWrapper.className = "completion-wrapper";
-        labelContainer.appendChild(checkboxWrapper);
+        topContainer.appendChild(checkboxWrapper);
         
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
@@ -717,12 +720,33 @@
         });
         checkboxWrapper.appendChild(checkbox);
         
-        // Label text
+        // Chapter Name (Label)
         const labelSpan = document.createElement("div");
         labelSpan.className = "gantt-label";
-        labelSpan.textContent = `Kapitel ${ch.chapter}`;
-        labelContainer.appendChild(labelSpan);
+        labelSpan.textContent = `${ch.chapter}`;
+        topContainer.appendChild(labelSpan);
 
+        // Add the notes input field below the top container
+        const notesContainer = document.createElement("div");
+        notesContainer.className = "notes-container";
+        
+        const notesInput = document.createElement("input");
+        notesInput.type = "text";
+        notesInput.className = "notes-input";
+        notesInput.placeholder = "Notizen werden lokal gespeichert";
+        
+        // Set up storage key for notes
+        const notesStorageKey = `gantt-chapter${chapterParam}-${ch.chapter}-notes`;
+        notesInput.value = localStorage.getItem(notesStorageKey) || "";
+        
+        // Save notes to localStorage on input
+        notesInput.addEventListener("input", () => {
+          localStorage.setItem(notesStorageKey, notesInput.value);
+        });
+        
+        notesContainer.appendChild(notesInput);
+        labelContainer.appendChild(notesContainer);
+        
         // Timeline container
         const timelineDiv = document.createElement("div");
         timelineDiv.className = "gantt-timeline";
@@ -754,7 +778,7 @@
         barTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
         
         // Format the tooltip content
-        let tooltipContent = `<strong>Kapitel ${ch.chapter}</strong><br>`;
+        let tooltipContent = `<strong>${ch.chapter}</strong><br>`;
         tooltipContent += `Start: ${ch.startDate} | Due: ${ch.dueDate}<br>`;
         
         // Add Lehrmittel info
@@ -820,27 +844,6 @@
           writtenExamTooltip.textContent = `Written Exam: ${ch.writtenExamDate}`;
           timelineDiv.appendChild(writtenExamTooltip);
         }
-        
-        // Add notes input field
-        const notesContainer = document.createElement("div");
-        notesContainer.className = "notes-container";
-        
-        const notesInput = document.createElement("input");
-        notesInput.type = "text";
-        notesInput.className = "notes-input";
-        notesInput.placeholder = "Notizen werden lokal gespeichert";
-        
-        // Set up storage key for notes
-        const notesStorageKey = `gantt-chapter${chapterParam}-${ch.chapter}-notes`;
-        notesInput.value = localStorage.getItem(notesStorageKey) || "";
-        
-        // Save notes to localStorage on input
-        notesInput.addEventListener("input", () => {
-          localStorage.setItem(notesStorageKey, notesInput.value);
-        });
-        
-        notesContainer.appendChild(notesInput);
-        labelContainer.appendChild(notesContainer);
       });
       
       // 8. Populate the dropdown lists
@@ -872,7 +875,7 @@
         // Lehrmittel Pflichtmodul
         if (ch.lehrmittel === true && !addedPflicht.lehrmittel.has(ch.chapter)) {
           const li = document.createElement('li');
-          li.textContent = `Lehrmittel Kapitel ${ch.chapter}`;
+          li.textContent = `Lehrmittel ${ch.chapter}`;
           pflichtmoduleList.appendChild(li);
           addedPflicht.lehrmittel.add(ch.chapter);
         }
@@ -880,7 +883,7 @@
         // Vertiefung Pflichtmodul
         if (ch.vertiefung === true && !addedPflicht.vertiefung.has(ch.chapter)) {
           const li = document.createElement('li');
-          li.textContent = `Vertiefung Kapitel ${ch.chapter}`;
+          li.textContent = `Vertiefung ${ch.chapter}`;
           pflichtmoduleList.appendChild(li);
           addedPflicht.vertiefung.add(ch.chapter);
         }
@@ -928,7 +931,7 @@
               r.length > 1 ? `${r[0]}-${r[r.length-1]}` : r[0]
             ).join(', ');
             
-            li.textContent = `Wahlmodul ${letter}: ${type === 'lehrmittel' ? 'Lehrmittel' : 'Vertiefung'} Kapitel ${formattedRanges}`;
+            li.textContent = `Wahlmodul ${letter}: ${type === 'lehrmittel' ? 'Lehrmittel' : 'Vertiefung'} ${formattedRanges}`;
             wahlmoduleList.appendChild(li);
           }
         }
