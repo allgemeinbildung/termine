@@ -17,7 +17,7 @@
     --row-height: 40px;
     --axis-height: 50px;
     --label-width: 220px;
-    --pixels-per-day: 20;
+    --pixels-per-day: 10;
     --mandatory-color: #3498db;
     --semi-mandatory-color: #e67e22;
     --due-color: #e67e22;
@@ -324,7 +324,7 @@
     border-radius: 4px;
     font-size: 12px;
     pointer-events: none;
-    z-index: 100;
+    z-index: 1000; /* Increased from 100 */
     opacity: 0;
     transition: opacity 0.2s;
     white-space: nowrap;
@@ -689,6 +689,12 @@
         todayLabel.style.top = AXIS_HEIGHT + "px";
         todayLabel.textContent = "HEUTE";
         chartInner.appendChild(todayLabel);
+
+        // Scroll to position the today line near the left, leaving some space for past events
+        setTimeout(() => {
+          const chartContainer = document.getElementById("chart-container");
+          chartContainer.scrollLeft = todayX - 200; // 200px of past events visible
+        }, 100);
       }
 
       // 7. Create chapter rows
