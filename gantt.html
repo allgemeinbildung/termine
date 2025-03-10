@@ -891,7 +891,7 @@
         // Lehrmittel Pflichtmodul
         if (ch.lehrmittel === true && !addedPflicht.lehrmittel.has(ch.chapter)) {
           const li = document.createElement('li');
-          li.textContent = `Lehrmittel ${ch.chapter}`;
+          li.innerHTML = `Lehrmittel ${ch.chapter} <span style="color: var(--due-color); margin-left: 5px;">●</span> ${ch.dueDate}`;
           pflichtmoduleList.appendChild(li);
           addedPflicht.lehrmittel.add(ch.chapter);
         }
@@ -899,7 +899,7 @@
         // Vertiefung Pflichtmodul
         if (ch.vertiefung === true && !addedPflicht.vertiefung.has(ch.chapter)) {
           const li = document.createElement('li');
-          li.textContent = `Vertiefung ${ch.chapter}`;
+          li.innerHTML = `Vertiefung ${ch.chapter} <span style="color: var(--due-color); margin-left: 5px;">●</span> ${ch.dueDate}`;
           pflichtmoduleList.appendChild(li);
           addedPflicht.vertiefung.add(ch.chapter);
         }
@@ -927,7 +927,6 @@
           
           if (chaptersInGroup.length > 0) {
             const chapterNumbers = chaptersInGroup.map(ch => ch.chapter).sort((a, b) => a - b);
-            const li = document.createElement('li');
             
             // Format as ranges if possible (e.g., "3-5" instead of "3, 4, 5")
             const ranges = [];
@@ -947,13 +946,21 @@
               r.length > 1 ? `${r[0]}-${r[r.length-1]}` : r[0]
             ).join(', ');
             
-            li.textContent = `Wahlmodul ${letter}: ${type === 'lehrmittel' ? 'Lehrmittel' : 'Vertiefung'} ${formattedRanges}`;
+            // Get the earliest due date from all chapters in this group
+            const dueDates = chaptersInGroup
+              .map(ch => ch.dueDate)
+              .filter(Boolean)
+              .sort();
+            
+            const earliestDueDate = dueDates.length > 0 ? dueDates[0] : '';
+            
+            const li = document.createElement('li');
+            li.innerHTML = `Wahlmodul ${letter}: ${type === 'lehrmittel' ? 'Lehrmittel' : 'Vertiefung'} ${formattedRanges} <span style="color: var(--due-color); margin-left: 5px;">●</span> ${earliestDueDate}`;
             wahlmoduleList.appendChild(li);
           }
         }
       }
     }
-
     // Load data from JSON
     fetch(jsonPath)
       .then(res => {
