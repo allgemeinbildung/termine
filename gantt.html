@@ -836,7 +836,7 @@
             examTooltip.style.left = examLeft + "px";
             examTooltip.style.top = "-25px";
             examTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
-            examTooltip.textContent = `Oral Exam: ${ch.oralExamDate}`;
+            examTooltip.textContent = `Mündliche Prüfung: ${ch.oralExamDate}`;
             timelineDiv.appendChild(examTooltip);
           }
         }
@@ -857,7 +857,7 @@
           writtenExamTooltip.style.left = writtenExamLeft + "px";
           writtenExamTooltip.style.top = "-25px";
           writtenExamTooltip.style.zIndex = "50"; // Ensure tooltips are always on top
-          writtenExamTooltip.textContent = `Written Exam: ${ch.writtenExamDate}`;
+          writtenExamTooltip.textContent = `Schriftliche Prüfung: ${ch.writtenExamDate}`;
           timelineDiv.appendChild(writtenExamTooltip);
         }
       });
