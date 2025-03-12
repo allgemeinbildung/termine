@@ -32,11 +32,11 @@
         "3",
         "4"
       ],
-      "startDate": "2025-03-19",
+      "startDate": "2025-03-12",
       "dueDate": "2025-04-02",
       "oralExamRelevant": null,
       "oralExamDate": null,
-      "writtenExamDate": null
+      "writtenExamDate": "2025-03-19"
     },
     {
       "chapter": "2.4 Kaufvertragsarten Teil 1",
