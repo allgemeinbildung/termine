@@ -10,7 +10,7 @@
       "dueDate": "2025-03-19",
       "oralExamRelevant": true,
       "oralExamDate": "2025-03-05",
-      "writtenExamDate": "2025-03-19"
+      "writtenExamDate": "2025-03-26"
     },
     {
       "chapter": "2.2 Budget",
@@ -23,28 +23,22 @@
       "dueDate": "2025-03-19",
       "oralExamRelevant": null,
       "oralExamDate": null,
-      "writtenExamDate": "2025-03-19"
+      "writtenExamDate": "2025-03-26"
     },
     {
       "chapter": "2.3 Zahlungsarten",
       "lehrmittel": true,
-      "vertiefung": [
-        "3",
-        "4"
-      ],
+      "vertiefung": null,
       "startDate": "2025-03-12",
       "dueDate": "2025-03-19",
       "oralExamRelevant": null,
       "oralExamDate": null,
-      "writtenExamDate": "2025-03-19"
+      "writtenExamDate": "2025-03-26"
     },
     {
       "chapter": "2.4 Kaufvertragsarten Teil 1",
       "lehrmittel": true,
-      "vertiefung": [
-        "3",
-        "4"
-      ],
+      "vertiefung": true,
       "startDate": "2025-03-19",
       "dueDate": "2025-04-02",
       "oralExamRelevant": true,
