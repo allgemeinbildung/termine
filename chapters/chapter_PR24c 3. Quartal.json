@@ -38,7 +38,7 @@
     {
       "chapter": "2.4 Kaufvertragsarten Teil 1",
       "lehrmittel": true,
-      "vertiefung": true,
+      "vertiefung": null,
       "startDate": "2025-03-19",
       "dueDate": "2025-04-02",
       "oralExamRelevant": true,
