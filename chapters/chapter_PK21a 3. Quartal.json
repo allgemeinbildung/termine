@@ -6,8 +6,8 @@
       "startDate": "2025-02-18",
       "dueDate": "2025-03-25",
       "oralExamRelevant": true,
-      "oralExamDate": "2025-03-04",
-      "writtenExamDate": "2025-03-25"
+      "oralExamDate": "2025-03-03",
+      "writtenExamDate": "2025-03-24"
     },
     {
       "chapter": "15.1 Arbeitsrecht",
@@ -17,11 +17,11 @@
         "3",
         "4"
       ],
-      "startDate": "2025-04-01",
-      "dueDate": "2025-05-06",
+      "startDate": "2025-03-31",
+      "dueDate": "2025-05-05",
       "oralExamRelevant": true,
-      "oralExamDate": "2025-04-15",
-      "writtenExamDate": "2025-05-06"
+      "oralExamDate": "2025-04-14",
+      "writtenExamDate": "2025-05-05"
     },
     {
       "chapter": "15.2 Qualifizierungen am Arbeitsmarkt",
@@ -31,11 +31,11 @@
         "3",
         "4"
       ],
-      "startDate": "2025-04-08",
-      "dueDate": "2025-05-06",
+      "startDate": "2025-04-07",
+      "dueDate": "2025-05-05",
       "oralExamRelevant": null,
       "oralExamDate": null,
-      "writtenExamDate": "2025-05-06"
+      "writtenExamDate": "2025-05-05"
     },
     {
       "chapter": "15.3 Arbeitslosigkeit",
@@ -45,10 +45,10 @@
         "3",
         "4"
       ],
-      "startDate": "2025-04-15",
-      "dueDate": "2025-05-06",
+      "startDate": "2025-04-14",
+      "dueDate": "2025-05-05",
       "oralExamRelevant": null,
       "oralExamDate": null,
-      "writtenExamDate": "2025-05-06"
+      "writtenExamDate": "2025-05-05"
     }
 ]
