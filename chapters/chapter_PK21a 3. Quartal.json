@@ -12,11 +12,7 @@
     {
       "chapter": "15.1 Arbeitsrecht",
       "lehrmittel": true,
-      "vertiefung": [
-        "2",
-        "3",
-        "4"
-      ],
+      "vertiefung": false,
       "startDate": "2025-03-31",
       "dueDate": "2025-05-12",
       "oralExamRelevant": true,
@@ -46,11 +42,7 @@
     {
       "chapter": "15.3 Arbeitslosigkeit",
       "lehrmittel": true,
-      "vertiefung": [
-        "2",
-        "3",
-        "4"
-      ],
+      "vertiefung": false,
       "startDate": "2025-05-05",
       "dueDate": "2025-05-12",
       "oralExamRelevant": null,
