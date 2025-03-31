@@ -18,25 +18,31 @@
         "4"
       ],
       "startDate": "2025-03-31",
-      "dueDate": "2025-05-05",
+      "dueDate": "2025-05-12",
       "oralExamRelevant": true,
-      "oralExamDate": "2025-04-14",
-      "writtenExamDate": "2025-05-05"
+      "oralExamDate": "2025-05-05",
+      "writtenExamDate": "2025-05-12"
     },
     {
       "chapter": "15.2 Qualifizierungen am Arbeitsmarkt",
       "lehrmittel": true,
-      "vertiefung": [
-        "2",
-        "3",
-        "4"
-      ],
+      "vertiefung": false,
       "startDate": "2025-04-07",
-      "dueDate": "2025-05-05",
+      "dueDate": "2025-05-12",
       "oralExamRelevant": null,
       "oralExamDate": null,
-      "writtenExamDate": "2025-05-05"
+      "writtenExamDate": "2025-05-12"
     },
+    {
+      "chapter": "Ausfall Probelauf QV",
+      "lehrmittel": true,
+      "vertiefung": false,
+      "startDate": "2025-04-14",
+      "dueDate": "2025-04-14",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": null,
+    },    
     {
       "chapter": "15.3 Arbeitslosigkeit",
       "lehrmittel": true,
@@ -45,10 +51,10 @@
         "3",
         "4"
       ],
-      "startDate": "2025-04-14",
-      "dueDate": "2025-05-05",
+      "startDate": "2025-05-05",
+      "dueDate": "2025-05-12",
       "oralExamRelevant": null,
       "oralExamDate": null,
-      "writtenExamDate": "2025-05-05"
+      "writtenExamDate": "2025-05-12"
     }
 ]
