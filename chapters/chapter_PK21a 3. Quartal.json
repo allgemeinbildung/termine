@@ -6,8 +6,8 @@
       "startDate": "2025-03-31",
       "dueDate": "2025-04-15",
       "oralExamRelevant": true,
-      "oralExamDate": "2025-05-05", 
-      "writtenExamDate": null
+      "oralExamDate": null, 
+      "writtenExamDate": "2025-05-05"
     },
     {
       "chapter": "Ausfall Probelauf QV",
