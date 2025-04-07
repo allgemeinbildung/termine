@@ -16,17 +16,7 @@
       "startDate": "2025-03-31",
       "dueDate": "2025-04-15",
       "oralExamRelevant": true,
-      "oralExamDate": "2025-05-05",
-      "writtenExamDate": null
-    },
-    {
-      "chapter": "15.2 Qualifizierungen am Arbeitsmarkt",
-      "lehrmittel": true,
-      "vertiefung": false,
-      "startDate": "2025-04-07",
-      "dueDate": "2025-05-12",
-      "oralExamRelevant": null,
-      "oralExamDate": null,
+      "oralExamDate": "2025-05-05", 
       "writtenExamDate": null
     },
     {
@@ -37,13 +27,23 @@
       "dueDate": "2025-04-15",
       "oralExamRelevant": null,
       "oralExamDate": null,
-      "writtenExamDate": "2025-04-15"
-    },    
+      "writtenExamDate": null
+    },
+    {
+      "chapter": "Lernpfad Repetition Sprache",
+      "lehrmittel": true,
+      "vertiefung": false,
+      "startDate": "2025-04-07",
+      "dueDate": "2025-05-05",
+      "oralExamRelevant": null,
+      "oralExamDate": null,
+      "writtenExamDate": "2025-05-05"
+    },        
     {
       "chapter": "15.3 Arbeitslosigkeit",
       "lehrmittel": true,
       "vertiefung": false,
-      "startDate": "2025-05-05",
+      "startDate": "2025-04-07",
       "dueDate": "2025-05-12",
       "oralExamRelevant": null,
       "oralExamDate": null,
