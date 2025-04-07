@@ -1,15 +1,5 @@
 [
     {
-      "chapter": "13.1 Sozialversicherungen",
-      "lehrmittel": true,
-      "vertiefung": true,
-      "startDate": "2025-02-18",
-      "dueDate": "2025-03-25",
-      "oralExamRelevant": true,
-      "oralExamDate": "2025-03-03",
-      "writtenExamDate": "2025-03-24"
-    },
-    {
       "chapter": "15.1 Arbeitsrecht",
       "lehrmittel": true,
       "vertiefung": false,
@@ -30,7 +20,7 @@
       "writtenExamDate": null
     },
     {
-      "chapter": "Lernpfad Repetition Sprache",
+      "chapter": "Lernpfad Sprache",
       "lehrmittel": true,
       "vertiefung": false,
       "startDate": "2025-04-07",
@@ -48,5 +38,15 @@
       "oralExamRelevant": null,
       "oralExamDate": null,
       "writtenExamDate": null
-    }
+    },
+    {
+      "chapter": "13.1 Sozialversicherungen",
+      "lehrmittel": true,
+      "vertiefung": true,
+      "startDate": "2025-02-18",
+      "dueDate": "2025-03-25",
+      "oralExamRelevant": true,
+      "oralExamDate": "2025-03-03",
+      "writtenExamDate": "2025-03-24"
+    }    
 ]
